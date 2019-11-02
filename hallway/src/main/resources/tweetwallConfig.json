@@ -42,7 +42,10 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleToday"
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTopTalks",
+                "config": {
+                    "topVotedType": "TODAY"
+                }
             },
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedToday",
@@ -73,7 +76,10 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleWeek"
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTopTalks",
+                "config": {
+                    "topVotedType": "WEEK"
+                }
             },
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedWeek",
@@ -93,7 +99,10 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleWeek"
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTopTalks",
+                "config": {
+                    "topVotedType": "WEEK"
+                }
             }
         ]
     }
