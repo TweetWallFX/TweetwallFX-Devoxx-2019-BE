@@ -1,0 +1,75 @@
+{
+    "twitter": {
+        "extendedMode": true
+    },
+    "filterchains": {
+        "chains": {
+            "twitter": {
+                "domainObjectClassName": "org.tweetwallfx.tweet.api.Tweet",
+                "defaultResult": true,
+                "filterSteps": [
+                    {
+                        "stepClassName": "org.tweetwallfx.tweet.api.filter.AcceptFromSenderFilterStep"
+                    },
+                    {
+                        "stepClassName": "org.tweetwallfx.tweet.api.filter.RejectFromSenderFilterStep"
+                    },
+                    {
+                        "stepClassName": "org.tweetwallfx.tweet.api.filter.UserMinimumFollwerCountFilterStep"
+                    },
+                    {
+                        "stepClassName": "org.tweetwallfx.tweet.api.filter.MaxHashtagLengthFilterStep"
+                    },
+                    {
+                        "stepClassName": "org.tweetwallfx.google.vision.ImageContentFilterStep"
+                    }
+                ]
+            }
+        }
+    },
+    "org.tweetwallfx.tweet.api.filter.AcceptFromSenderFilterStep$Config": {
+        "checkRetweeted": false,
+        "userHandles": [
+            "Devoxx"
+        ]
+    },
+    "org.tweetwallfx.tweet.api.filter.MaxHashtagLengthFilterStep$Config": {
+        "checkRetweeted": true,
+        "maxLength": 15
+    },
+    "org.tweetwallfx.tweet.api.filter.RejectFromSenderFilterStep$Config": {
+        "checkRetweeted": true,
+        "userHandles": [
+            "turkeytoday"
+        ]
+    },
+    "org.tweetwallfx.tweet.api.filter.UserMinimumFollwerCountFilterStep$Config": {
+        "count": 25
+    },
+    "org.tweetwallfx.google.vision.ImageContentFilterStep$Config": {
+        "checkRetweeted": true,
+        "adult": {
+            "acceptableLikelyhood": "VERY_UNLIKELY"
+        },
+        "medical": {
+            "acceptableLikelyhood": "UNLIKELY"
+        },
+        "racy": {
+            "acceptableLikelyhood": "VERY_UNLIKELY"
+        },
+        "spoof": {
+            "acceptableLikelyhood": "UNLIKELY"
+        },
+        "violence": {
+            "acceptableLikelyhood": "VERY_UNLIKELY"
+        }
+    },
+    "org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.ScheduleDataProvider": {
+        "initialDelay": 0,
+        "scheduleDuration": 900
+    },
+    "org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider": {
+        "historySize": 25,
+        "maxTweets": 10
+    }
+}

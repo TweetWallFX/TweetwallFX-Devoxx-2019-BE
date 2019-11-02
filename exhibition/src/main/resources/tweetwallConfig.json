@@ -1,0 +1,100 @@
+{
+    "tweetwall": {
+        "query": "#devoxx",
+        "title": "The JavaFX Exhibition Tweetwall for Devoxx BE 2019!",
+        "stylesheetResource": "tweetwall.css"
+    },
+    "stepEngine": {
+        "steps": [
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
+                "config": {
+                    "layoutX": 103,
+                    "layoutY": 200,
+                    "stepDuration": 500
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTweets"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.FadeInCloudStep",
+                "config": {
+                    "layoutX": 1100,
+                    "layoutY": 300,
+                    "width": 800,
+                    "height": 600,
+                    "stepDuration": 30000
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipInTweets",
+                "config": {
+                    "layoutX": 1200,
+                    "layoutY": 300,
+                    "numberOfTweetsToDisplay": 6,
+                    "tweetGap": 15,
+                    "tweetWidth": 600,
+                    "stepDuration": 15000
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleToday"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedToday",
+                "config": {
+                    "layoutX": 103,
+                    "layoutY": 200,
+                    "stepDuration": 500
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTweets"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipInTweets",
+                "config": {
+                    "layoutX": 1200,
+                    "layoutY": 300,
+                    "numberOfTweetsToDisplay": 6,
+                    "tweetGap": 15,
+                    "tweetWidth": 600,
+                    "stepDuration": 15000
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
+                "config": {
+                    "nodeSelector": "#topRatedToday"
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleWeek"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedWeek",
+                "config": {
+                    "layoutX": 103,
+                    "layoutY": 200,
+                    "stepDuration": 500
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTweets"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
+                "config": {
+                    "nodeSelector": "#topRatedWeek"
+                }
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutScheduleWeek"
+            }
+        ]
+    }
+}

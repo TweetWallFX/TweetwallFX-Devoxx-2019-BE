@@ -1,0 +1,289 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 TweetWallFX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+        jcenter()
+    }
+
+    dependencies {
+        classpath group: 'com.diffplug.spotless', name: 'spotless-plugin-gradle', version: versionSpotless
+        classpath group: 'com.github.ben-manes', name: 'gradle-versions-plugin', version: versionGradleVersionsPlugin
+        classpath group: 'com.netflix.nebula', name: 'gradle-info-plugin', version: versionGradleInfoPlugin
+        classpath group: 'gradle.plugin.com.github.spotbugs', name: 'spotbugs-gradle-plugin', version: versionSpotbugs
+
+        if (JavaVersion.current().isJava11Compatible()) {
+            classpath group: 'net.ltgt.gradle', name: 'gradle-errorprone-plugin', version: versionGradleErrorpronePlugin4Java11AndLater
+        } else {
+            throw new GradleException("Building with Java major version prior to 11 is not supported.")
+        }
+
+        // VCS dependency required by plugin 'gradle-info-plugin'
+        classpath group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: versionJGit
+        classpath group: 'org.sonarsource.scanner.gradle', name: 'sonarqube-gradle-plugin', version: versionSonarqubeGradlePlugin
+        classpath group: 'com.google.gradle', name: 'osdetector-gradle-plugin', version: versionOsdetectorGradlePlugin
+    }
+}
+
+apply plugin: 'build-dashboard'
+apply plugin: 'org.sonarqube'
+apply plugin: 'com.google.osdetector'
+
+// applying Versions plugin
+apply plugin: 'com.github.ben-manes.versions'
+
+ext {
+    releaseDate = new Date()
+    bintrayEnabled = \
+        ('false' != System.getenv('TRAVIS_PULL_REQUEST')) &&
+        null != findProperty('BINTRAY_USER') &&
+        null != findProperty('BINTRAY_KEY')
+    javaFxPlatform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+}
+
+allprojects {
+    group = 'org.tweetwallfx'
+    version = currentVersion
+    description = 'JavaFX based Tweetwall (' + name + ')'
+
+    repositories {
+        jcenter()
+    }
+
+    // configuring Spotless
+    apply plugin: "com.diffplug.gradle.spotless"
+
+    spotless {
+        format 'textBasedFiles', {
+            target fileTree(project.rootDir) {
+                include '**/*.gradle'
+                include '**/*.asciidoc'
+                include '**/*.adoc'
+                include '**/*.asc'
+                include '**/*.css'
+                include '**/*.json'
+                include '**/*.md'
+                include '**/*.properties'
+                include '**/.gitignore'
+                exclude '**/.gradle/**'
+                exclude '**/build/**'
+            }
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+        }
+        format 'javaFiles', {
+            target fileTree(project.rootDir) {
+                include '**/*.java'
+                include '**/*.groovy'
+            }
+
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+            custom('noMultipleEmptyLines', {fileContent -> fileContent.replaceAll('\n{3,}', '\n\n')})
+            custom('noEmptyLineBeforeClosingBrace', {fileContent -> fileContent.replaceAll(/\n+(\n *[\}])/, '$1')})
+            custom('noStarImports', {fileContent -> fileContent.replaceAll(/\nimport (static )?[a-zA-Z0-9.]*[.][\*];/, '')})
+        }
+    }
+
+    afterEvaluate {
+        check.dependsOn(spotlessCheck)
+    }
+
+    // now configuring for projects that coontain code not just structuring the project
+    if (childProjects.isEmpty()) {
+        // configuring standard java project
+        apply plugin: 'java'
+        apply plugin: 'idea'
+        apply plugin: 'jacoco'
+        apply plugin: 'eclipse'
+        apply plugin: 'nebula.info'
+        apply plugin: 'maven-publish'
+
+        configurations {
+            javafx
+            jaxb
+        }
+
+        dependencies {
+            javafx group: 'org.openjfx', name: 'javafx-base', version: versionJavaFx, classifier: javaFxPlatform
+            javafx group: 'org.openjfx', name: 'javafx-graphics', version: versionJavaFx, classifier: javaFxPlatform
+            javafx group: 'org.openjfx', name: 'javafx-fxml', version: versionJavaFx, classifier: javaFxPlatform
+            javafx group: 'org.openjfx', name: 'javafx-controls', version: versionJavaFx, classifier: javaFxPlatform
+            jaxb group: 'com.sun.activation', name: 'javax.activation', version: versionJavaActivation
+            jaxb group: 'javax.xml.bind', name: 'jaxb-api', version: versionJaxB
+            jaxb group: 'com.sun.xml.bind', name: 'jaxb-impl', version: versionJaxB
+            testCompile group: 'junit', name: 'junit', version: versionJUnit
+            testCompile group: 'org.assertj', name: 'assertj-core', version: versionAssertJ
+        }
+
+        jar {
+            manifest.attributes provider: 'gradle'
+        }
+
+        javadoc {
+            if (JavaVersion.current().isJava11Compatible()) {
+                afterEvaluate {
+                    def additionalModules = (configurations.javafx + configurations.jaxb)
+                    options.addStringOption('-module-path', additionalModules.asPath)
+                    options.addStringOption('-add-modules', 'java.activation,java.xml.bind,javafx.controls,javafx.graphics,javafx.fxml')
+                }
+            }
+        }
+
+        tasks.withType(JavaCompile) {
+            options.compilerArgs.addAll([
+                    '-Xlint:all',
+                    '-Werror',
+                    '-proc:none',
+            ])
+
+            if (JavaVersion.current().isJava11Compatible()) {
+                afterEvaluate {
+                    def additionalModules = (configurations.javafx + configurations.jaxb)
+                    options.compilerArgs.addAll([
+                            '--module-path',
+                            additionalModules.asPath,
+                            '--add-modules',
+                            'java.activation,java.xml.bind,javafx.controls,javafx.graphics,javafx.fxml',
+                    ])
+                }
+            }
+        }
+
+        tasks.withType(JavaExec) {
+            if (JavaVersion.current().isJava11Compatible()) {
+                afterEvaluate {
+                    def additionalModules = (configurations.javafx + configurations.jaxb)
+                    jvmArgs '--module-path'
+                    jvmArgs additionalModules.asPath
+                    jvmArgs '--add-modules'
+                    jvmArgs 'java.activation,java.xml.bind,javafx.controls,javafx.graphics,javafx.fxml'
+                }
+            }
+        }
+
+        tasks.withType(Test) {
+            if (JavaVersion.current().isJava11Compatible()) {
+                afterEvaluate {
+                    def additionalModules = (configurations.javafx + configurations.jaxb)
+                    jvmArgs '--module-path'
+                    jvmArgs additionalModules.asPath
+                    jvmArgs '--add-modules'
+                    jvmArgs 'java.activation,java.xml.bind,javafx.controls,javafx.graphics,javafx.fxml'
+                }
+            }
+        }
+
+        check {
+            dependsOn 'javadoc'
+        }
+
+        // configuring Errorprone
+        if (!JavaVersion.current().isJava12Compatible()) {
+            apply plugin: 'net.ltgt.errorprone'
+
+            dependencies {
+                if (JavaVersion.current().isJava11Compatible()) {
+                    errorprone group: 'com.google.errorprone', name: 'error_prone_core', version: versionErrorProneCore
+                } else {
+                    throw new GradleException("Building with Java major version prior to 11 is not supported.")
+                }
+            }
+        }
+
+        // configuring Spotbugs
+        apply plugin: 'com.github.spotbugs'
+
+        spotbugs {
+            ignoreFailures = false
+        }
+
+        tasks.withType(com.github.spotbugs.SpotBugsTask) {
+            // Workaround to bug https://github.com/spotbugs/spotbugs/issues/440
+            def sourceSetName = (name - 'spotbugs').uncapitalize()
+            dependsOn( sourceSets[sourceSetName].classesTaskName)
+
+            reports {
+                xml.enabled = false
+                html.enabled = true
+            }
+
+            if (JavaVersion.current().isJava11Compatible()) {
+                afterEvaluate {
+                    classpath = (classpath + configurations.javafx)
+                }
+            }
+        }
+
+        // configuring Versions plugin
+        dependencyUpdates {
+            revision = 'release'
+            rejectVersionIf { /*ComponentSelection*/ selection ->
+                // version is a non-release version?
+                return ['alpha', 'beta', 'rc', 'cr', 'm', 'ea'].any{qualifier ->
+                     selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*.*/
+                }
+            }
+        }
+    }
+
+    plugins.withType(org.gradle.api.plugins.GroovyPlugin) {
+        dependencies {
+            compile group: 'org.codehaus.groovy', name: 'groovy-all', version: versionGroovy
+            testCompile group: 'org.spockframework', name: 'spock-core', version: versionSpockFramework
+        }
+    }
+
+    tasks.withType(org.gradle.api.tasks.testing.Test) {
+        systemProperty 'org.tweetwallfx.tests.executeCFPClientLiveTests', executeCFPClientLiveTests
+    }
+}
+
+task createFolders(description: 'Creates the folders for the projects and sourceSets should they not exist.') doLast {
+    rootProject.allprojects.each {p ->
+        if (!p.getProjectDir().isDirectory()) {
+            println 'Creating project folder: ' + p.getProjectDir()
+            p.getProjectDir().mkdirs()
+        }
+
+        if (p.hasProperty('sourceSets')) {
+            p.sourceSets*.allSource*.srcDirs*.each { File srcDir ->
+                if (!srcDir.isDirectory()) {
+                    println 'Creating source folder: ' + srcDir
+                    srcDir.mkdirs()
+                }
+            }
+        }
+    }
+}
+
+task runExhibition dependsOn ':tweetwallfx-devoxx-2019-be-exhibition:run'
+task runCinema dependsOn ':tweetwallfx-devoxx-2019-be-cinema:run'
+task runHallway dependsOn ':tweetwallfx-devoxx-2019-be-hallway:run'
