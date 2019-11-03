@@ -33,8 +33,8 @@ public class GenericShutdownStep implements Step{
     @Override
     public boolean requiresPlatformThread() {
         return false;
-    }   
-    
+    }
+
         /**
      * Implementation of {@link Step.Factory} as Service implementation creating
      * {@link Devoxx19FlipInTweets}.
@@ -49,8 +49,8 @@ public class GenericShutdownStep implements Step{
         @Override
         public Class<GenericShutdownStep> getStepClass() {
             return GenericShutdownStep.class;
-        }        
-        
+        }
+
         @Override
         public Collection<Class<? extends DataProvider>> getRequiredDataProviders(final StepEngineSettings.StepDefinition stepSettings) {
             return Collections.emptyList();

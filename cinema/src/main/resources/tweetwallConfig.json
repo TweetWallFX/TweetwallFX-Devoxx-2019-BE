@@ -44,9 +44,9 @@
                     "unit": "SECONDS",
                     "amount": "15"
                 }
-            },            
+            },
             {
-                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep", 
+                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
                 "config": {
                     "nodeSelector": "#scheduleNode"
                 }
@@ -83,7 +83,7 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep", 
+                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
                 "config": {
                     "nodeSelector": "#scheduleNode"
                 }

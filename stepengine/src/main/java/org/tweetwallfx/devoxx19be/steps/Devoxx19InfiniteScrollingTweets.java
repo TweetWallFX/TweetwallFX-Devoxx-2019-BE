@@ -69,19 +69,19 @@ import org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider;
 public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
     private static final Logger LOG = LogManager.getLogger(Devoxx19InfiniteScrollingTweets.class);
-    
+
     private final Config config;
 
     private List<Tweet> tweets;
-    
+
     private TweetUserProfileImageDataProvider tweetUserProfileImageDataProvider;
     private PhotoImageMediaEntryDataProvider photoImageMediaEntryDataProvider;
     private TweetStreamDataProvider tweetStreamDataProvider;
     private WordleSkin wordleSkin;
     private CountDownLatch shutdownCountdown;
-    
+
     private volatile boolean isTerminated = false;
-    
+
     protected Devoxx19InfiniteScrollingTweets(Config config) {
         this.config = config;
     }
@@ -93,10 +93,9 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         context.put(config.stepIdentifier, this);
         tweetUserProfileImageDataProvider = context.getDataProvider(TweetUserProfileImageDataProvider.class);
         photoImageMediaEntryDataProvider = context.getDataProvider(PhotoImageMediaEntryDataProvider.class);
-        
+
         tweetStreamDataProvider = context.getDataProvider(TweetStreamDataProvider.class);
 
-        
         updateTweetList();
         for (int i = 0; i< config.columns; i++) {
             var pane = createInfinitePane(wordleSkin, "infiniteStream." + i);
@@ -106,12 +105,12 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             pane.setMinWidth(config.tweetWidth + 64 + 10 +5);
             pane.setMinHeight(config.height);
             pane.setMaxWidth(config.tweetWidth + 64 + 10 + 5);
-            pane.setMaxHeight(config.height);        
+            pane.setMaxHeight(config.height);
             pane.setPrefWidth(config.tweetWidth + 64 + 10 + 5);
             pane.setPrefHeight(config.height);
             pane.setClip(new Rectangle(config.tweetWidth + 64 + 10 + 10, config.height));
-            
-            initializePane(pane);            
+
+            initializePane(pane);
         }
         context.proceed();
     }
@@ -120,11 +119,11 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         tweets = tweetStreamDataProvider.getTweets();
         Collections.reverse(tweets);
     }
-    
+
     void initializePane(Pane pane) {
         addNode(createNode(), pane, 0);
-    }    
-    
+    }
+
     void addNode(Node node, Pane pane, double lastLayoutY) {
         if (lastLayoutY < config.height) {
             node.setOpacity(0);
@@ -132,7 +131,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             node.setLayoutX(0);
             pane.applyCss();
             pane.layout();
-            node.setLayoutY(lastLayoutY + config.tweetGap);            
+            node.setLayoutY(lastLayoutY + config.tweetGap);
             addNode(createNode(), pane, node.getLayoutY() + node.getLayoutBounds().getHeight());
         } else {
             for (Node nodeToScroll : pane.getChildren().subList(0, pane.getChildren().size()-1)) {
@@ -152,7 +151,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                 fadeIn.play();
                 locationTransition.play();
             }
-            
+
             Node lastNode = pane.getChildren().get(pane.getChildren().size()-1);
             double pixelToTravel = lastNode.getLayoutY() - (config.height-lastNode.getLayoutBounds().getHeight());
             double duration = pixelToTravel / config.speed;
@@ -167,17 +166,17 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             var fadeIn = new FadeTransition(Duration.millis(1500), lastNode);
             fadeIn.setFromValue(0);
             fadeIn.setToValue(1);
-            fadeIn.play();            
+            fadeIn.play();
             locationTransition.play();
         }
     }
 
     void scrollInfinite(Pane pane) {
         scrollIn(createNode(), pane).play();
-    }    
-    
+    }
+
     private int next = 0;
-    
+
     private Tweet getNextTweet() {
         if (next >= config.numberOfTweets - 1) {
             next = 0;
@@ -187,26 +186,26 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         next++;
         return tweet;
     }
-    
+
     private Node createNode() {
         return createSingleTweetDisplay(getNextTweet());
-    }    
-    
+    }
+
     Transition scrollIn(final Node node, Pane pane) {
         node.setLayoutY(config.height + config.tweetGap);
-        node.setLayoutX(0);    
-        
+        node.setLayoutX(0);
+
         pane.getChildren().add(node);
-        
+
         // required to know the correct height of node in next step
         pane.applyCss();
         pane.layout();
-        
+
         double pixelToTravel = node.getLayoutBounds().getHeight() + config.tweetGap;
         double duration = pixelToTravel / config.speed;
-        
-        var locationTransition = new LocationTransition(Duration.seconds(duration), node, 
-                node.getLayoutX(), pane.getHeight() + config.tweetGap, 
+
+        var locationTransition = new LocationTransition(Duration.seconds(duration), node,
+                node.getLayoutX(), pane.getHeight() + config.tweetGap,
                 node.getLayoutX(), pane.getHeight() - node.getLayoutBounds().getHeight());
         locationTransition.setInterpolator(Interpolator.LINEAR);
         locationTransition.setOnFinished((evt) -> {
@@ -217,21 +216,21 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         });
         return locationTransition;
     }
-    
+
     Transition scrollOut(Node node, Pane pane) {
         double pixelToTravel = pane.getHeight();
         double duration = pixelToTravel / config.speed;
-        
-        var locationTransition = new LocationTransition(Duration.seconds(duration), node, 
-                node.getLayoutX(), node.getLayoutY(), 
+
+        var locationTransition = new LocationTransition(Duration.seconds(duration), node,
+                node.getLayoutX(), node.getLayoutY(),
                 node.getLayoutX(), -node.getLayoutBounds().getHeight());
-        locationTransition.setInterpolator(Interpolator.LINEAR);        
+        locationTransition.setInterpolator(Interpolator.LINEAR);
         locationTransition.setOnFinished((evt) -> {
             pane.getChildren().remove(node);
         });
-        return locationTransition;  
-    }    
-    
+        return locationTransition;
+    }
+
     private Pane createInfinitePane(final WordleSkin wordleSkin, String paneId) {
         var pane = new Pane();
         pane.setId(paneId);
@@ -243,7 +242,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
     private Pane createSingleTweetDisplay(
             final Tweet displayTweet) {
-                
+
         String textWithoutMediaUrls = displayTweet.getDisplayEnhancedText();
         Text text = new Text(textWithoutMediaUrls.replaceAll("[\n\r]", "|"));
         text.setCache(true);
@@ -278,9 +277,9 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         VBox.setMargin(name, new Insets(0,0,5,0));
 //        tweet.setCacheHint(CacheHint.QUALITY);
 //        tweet.setSpacing(10);
-        
+
         Pane pane = tweet;
-        
+
         Optional<MediaTweetEntry> maybeImageEntry = Arrays.stream(displayTweet.getMediaEntries()).filter(e -> e.getType().equals(MediaTweetEntryType.photo)).findFirst();
         if(maybeImageEntry.isPresent()) {
             var image = photoImageMediaEntryDataProvider.getImage(maybeImageEntry.get());
@@ -299,7 +298,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             HBox.setMargin(profileImageView, new Insets(5,5,5,5));
             HBox.setMargin(vbox, new Insets(5,5,5,0));
         }
-        
+
         return pane;
     }
 
@@ -307,13 +306,13 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     public java.time.Duration preferredStepDuration(final MachineContext context) {
         return java.time.Duration.ofMillis(config.stepDuration);
     }
-    
+
     @Override
     public void shutdown() {
         shutdownCountdown = new CountDownLatch(2);
         this.isTerminated = true;
         Platform.runLater(() -> {
-            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId().startsWith("infiniteStream")).forEach(pane -> {            
+            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId().startsWith("infiniteStream")).forEach(pane -> {
                 LOG.info("Shutting down " + pane.getId());
                 for (Node nodeToFadeOut : pane.getChildren()) {
                     var fadeOut = new FadeTransition(Duration.millis(1500), nodeToFadeOut);
@@ -327,7 +326,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                             shutdownCountdown.countDown();
                         }
                     });
-                    fadeOut.play();                    
+                    fadeOut.play();
                 }
             });
         });
@@ -358,7 +357,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         public Collection<Class<? extends DataProvider>> getRequiredDataProviders(final StepEngineSettings.StepDefinition stepSettings) {
             return Arrays.asList(
                     TweetStreamDataProvider.class,
-                    TweetUserProfileImageDataProvider.class,    
+                    TweetUserProfileImageDataProvider.class,
                     PhotoImageMediaEntryDataProvider.class
             );
         }

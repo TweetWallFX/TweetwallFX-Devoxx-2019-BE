@@ -24,9 +24,6 @@
 package org.tweetwallfx.devoxx19be.steps;
 
 public interface Controllable {
-    
+
     public void shutdown();
-
-
-    
 }
