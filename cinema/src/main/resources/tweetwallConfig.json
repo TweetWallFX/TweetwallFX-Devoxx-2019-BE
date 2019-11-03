@@ -98,7 +98,7 @@
             },
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep"
-            }             
+            }
         ]
     }
 }
