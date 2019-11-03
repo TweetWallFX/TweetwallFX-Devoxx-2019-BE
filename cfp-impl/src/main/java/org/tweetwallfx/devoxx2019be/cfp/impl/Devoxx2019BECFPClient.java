@@ -295,8 +295,11 @@ public class Devoxx2019BECFPClient implements CFPClient {
         result.setRoomCapacity(-1);
         result.setRoomId(Integer.toString(input.getRoomId()));
         result.setRoomName(input.getRoomName());
-//        result.setRoomSetup(input.);
-        result.setRoomSetup("");
+        result.setRoomSetup(input.getRoomName().startsWith("Room")
+                ? "Cinema"
+                : input.getRoomName().startsWith("BOF")
+                ? "BOF"
+                : "Any Other"); // reversed alpha numeric sort
         result.setSlotId(Integer.toString(input.getTalkId()));
         result.setToTime(Instant.parse(input.getToDate()).atZone(ZoneId.systemDefault()).format(HOUR_MINUTE));
         result.setToTimeMillis(Instant.parse(input.getToDate()).toEpochMilli());
