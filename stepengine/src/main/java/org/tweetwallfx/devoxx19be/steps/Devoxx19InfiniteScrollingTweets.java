@@ -62,7 +62,7 @@ import org.tweetwallfx.tweet.api.entry.MediaTweetEntryType;
 import org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider;
 
 /**
- * Devox 2019 TweetStream Flip In Animation Step
+ * Devoxx 2019 Infinite TweetStream Animation Step
  *
  * @author Sven Reimers
  */
@@ -142,7 +142,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                         nodeToScroll.getLayoutX(), nodeToScroll.getLayoutY(),
                         nodeToScroll.getLayoutX(), -nodeToScroll.getLayoutBounds().getHeight());
                 locationTransition.setInterpolator(Interpolator.LINEAR);
-                locationTransition.setOnFinished((evt) -> {
+                locationTransition.setOnFinished(evt -> {
                     pane.getChildren().remove(node);
                 });
                 var fadeIn = new FadeTransition(Duration.millis(1500), nodeToScroll);
@@ -159,7 +159,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                         lastNode.getLayoutX(), lastNode.getLayoutY(),
                         lastNode.getLayoutX(), config.height-lastNode.getLayoutBounds().getHeight());
             locationTransition.setInterpolator(Interpolator.LINEAR);
-            locationTransition.setOnFinished((evt) -> {
+            locationTransition.setOnFinished(evt -> {
                 scrollOut(lastNode, pane).play();
                 scrollIn(createNode(), pane).play();
             });
@@ -208,7 +208,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                 node.getLayoutX(), pane.getHeight() + config.tweetGap,
                 node.getLayoutX(), pane.getHeight() - node.getLayoutBounds().getHeight());
         locationTransition.setInterpolator(Interpolator.LINEAR);
-        locationTransition.setOnFinished((evt) -> {
+        locationTransition.setOnFinished(evt -> {
             scrollOut(node, pane).play();
             if (!isTerminated) {
                 scrollIn(createNode(), pane).play();
@@ -225,7 +225,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                 node.getLayoutX(), node.getLayoutY(),
                 node.getLayoutX(), -node.getLayoutBounds().getHeight());
         locationTransition.setInterpolator(Interpolator.LINEAR);
-        locationTransition.setOnFinished((evt) -> {
+        locationTransition.setOnFinished(evt -> {
             pane.getChildren().remove(node);
         });
         return locationTransition;
@@ -318,7 +318,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                     var fadeOut = new FadeTransition(Duration.millis(1500), nodeToFadeOut);
                     fadeOut.setFromValue(1);
                     fadeOut.setToValue(0);
-                    fadeOut.setOnFinished((e) -> {
+                    fadeOut.setOnFinished(e -> {
                         pane.getChildren().remove(nodeToFadeOut);
                         if (pane.getChildren().isEmpty()) {
                             wordleSkin.getPane().getChildren().remove(pane);
@@ -339,7 +339,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
     /**
      * Implementation of {@link Step.Factory} as Service implementation creating
-     * {@link Devoxx19FlipInTweets}.
+     * {@link Devoxx19InfiniteScrollingTweets}.
      */
     public static final class FactoryImpl implements Step.Factory {
 
