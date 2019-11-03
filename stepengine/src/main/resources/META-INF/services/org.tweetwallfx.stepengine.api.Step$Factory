@@ -7,3 +7,5 @@ org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedWeek$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.mosaic.ImageMosaicCreateStep$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.cloud.FadeInCloudStep$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep$FactoryImpl
+org.tweetwallfx.devoxx19be.steps.Devoxx19InfiniteScrollingTweets$FactoryImpl
+org.tweetwallfx.devoxx19be.steps.GenericShutdownStep$FactoryImpl

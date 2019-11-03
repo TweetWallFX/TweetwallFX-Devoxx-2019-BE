@@ -130,6 +130,7 @@
 .tweetDisplay {
     -fx-background-color: devoxx_gradient;
     -fx-background-radius: 5;
+    /*-fx-background-insets: -5pt;*/
     /*    -fx-border-color: black;
         -fx-border-style: solid;
         -fx-border-width: 0pt 0pt 1pt 0pt;
