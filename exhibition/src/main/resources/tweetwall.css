@@ -57,10 +57,10 @@
 }
 
 .wordle {
-    -fx-graphic: none;
+    -fx-graphic: url(Devoxx-Logo-White.png);
     -fx-background-color: black;
-    -fx-background-graphic: url(Cinema-backdrop-Devoxx-BE-2019.png);
-    /*-fx-second-graphic: url(jug-bodensee-logo-A-gross-white.png);*/
+    -fx-background-graphic: url(Cinema-backdrop-Devoxx-BE-2019-4K-noLogos.png);
+    -fx-second-graphic: url(jug-bodensee-logo-weiss3-gross.png);
     -fx-display-tag-num: 25;
     /*-fx-font: 12pt "BebasNeue";*/
     -fx-font-size-min: 36;
@@ -69,7 +69,7 @@
 }
 
 .wordle .bg-image {
-    /*-fx-opacity: 0.4;*/
+    -fx-opacity: 0.4;
 }
 
 .wordle .secondlogo {
@@ -85,13 +85,13 @@
     /*visibility: hidden;*/
     /*    -fx-scale-x: 0.7;
         -fx-scale-y: 0.7;*/
-    /*-fx-translate-x: +50;*/
-    /*-fx-translate-y: -50;*/
+    -fx-translate-x: +150;
+    -fx-translate-y: -150;
 }
 
 .wordle .tag {
     /*-fx-font-family: "Calibri";*/
-    -fx-fill: #060b33  !important;
+    -fx-fill:blanchedalmond  !important;
     /*    -fx-stroke: black;
         -fx-stroke-width: 0.5;    */
     /*-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );*/
