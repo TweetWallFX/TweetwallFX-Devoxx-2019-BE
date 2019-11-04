@@ -30,12 +30,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
@@ -45,7 +49,6 @@ import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.Step;
 import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
 import org.tweetwallfx.stepengine.api.config.StepEngineSettings;
-import org.tweetwallfx.transitions.FlipInXTransition;
 
 /**
  * Devoxx 2019 Show Schedule (Flip In) Animation Step
@@ -66,17 +69,21 @@ public class Devoxx19ShowSchedule implements Step {
         WordleSkin wordleSkin = (WordleSkin) context.get("WordleSkin");
         final ScheduleDataProvider dataProvider = context.getDataProvider(ScheduleDataProvider.class);
 
-        List<FlipInXTransition> transitions = new ArrayList<>();
         if (null == wordleSkin.getNode().lookup("#scheduleNode")) {
             try {
                 Node scheduleNode = FXMLLoader.<Node>load(this.getClass().getResource("/schedule.fxml"));
-                transitions.add(new FlipInXTransition(scheduleNode));
-//                scheduleNode.layoutXProperty().bind(Bindings.multiply(150.0 / 1920.0, wordleSkin.getSkinnable().widthProperty()));
-//                scheduleNode.layoutYProperty().bind(Bindings.multiply(200.0 / 1280.0, wordleSkin.getSkinnable().heightProperty()));
+                scheduleNode.setOpacity(0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(500), scheduleNode);
+                fadeIn.setFromValue(0);
+                fadeIn.setToValue(1);
+                fadeIn.setOnFinished(e -> {
+                    LOGGER.info("Calling proceed from Devoxx19SchowSchedule");
+                    context.proceed();
+                });
                 scheduleNode.setLayoutX(config.layoutX);
                 scheduleNode.setLayoutY(config.layoutY);
-                wordleSkin.getPane().getChildren().add(scheduleNode);
-
+                scheduleNode.setCacheHint(CacheHint.SPEED);
+                scheduleNode.setCache(true);
                 GridPane grid = (GridPane) scheduleNode.lookup("#sessionGrid");
                 int col = 0;
                 int row = 0;
@@ -92,15 +99,20 @@ public class Devoxx19ShowSchedule implements Step {
                         row++;
                     }
                 }
+
+                Platform.runLater(() ->  {
+                    wordleSkin.getPane().getChildren().add(scheduleNode);
+                    fadeIn.play();
+                });
             } catch (IOException ex) {
                 LOGGER.error(ex);
             }
         }
-        ParallelTransition flipIns = new ParallelTransition();
-        flipIns.getChildren().addAll(transitions);
-        flipIns.setOnFinished(e -> context.proceed());
+    }
 
-        flipIns.play();
+    @Override
+    public boolean requiresPlatformThread() {
+        return false;
     }
 
     @Override
@@ -119,6 +131,8 @@ public class Devoxx19ShowSchedule implements Step {
             room.setText(sessionData.room);
             Label startTime = (Label) session.lookup("#startTime");
             startTime.setText(sessionData.beginTime + " - " + sessionData.endTime);
+            session.setCacheHint(CacheHint.SPEED);
+            session.setCache(true);
             return session;
         } catch (IOException ex) {
             LOGGER.error(ex);
