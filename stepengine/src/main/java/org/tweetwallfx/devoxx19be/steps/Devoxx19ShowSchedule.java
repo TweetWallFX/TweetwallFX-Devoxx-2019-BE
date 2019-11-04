@@ -90,9 +90,9 @@ public class Devoxx19ShowSchedule implements Step {
             titel.setStyle("-fx-background-color: devoxx_gradient; -fx-background-radius: 10; -fx-text-fill: #060b33; -fx-font-size: 20pt; -fx-font-weight: bold;");
             titel.setPrefHeight(config.titelHeight);
             titel.setAlignment(Pos.CENTER);
-            
+
             scheduleNode.getChildren().add(titel);
-            
+
             FadeTransition fadeIn = new FadeTransition(Duration.millis(500), scheduleNode);
             fadeIn.setFromValue(0);
             fadeIn.setToValue(1);
@@ -112,7 +112,7 @@ public class Devoxx19ShowSchedule implements Step {
 
             Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
             while (iterator.hasNext()) {
-                Pane sessionPane = createSessionNode(context, iterator.next());                
+                Pane sessionPane = createSessionNode(context, iterator.next());
                 double sessionWidth = (config.width - config.sessionHGap) / 2.0 ;
                 sessionPane.setMinWidth(sessionWidth);
                 sessionPane.setMaxWidth(sessionWidth);
@@ -237,8 +237,8 @@ public class Devoxx19ShowSchedule implements Step {
         public int avatarSpacing = 4;
         public double width = 800;
         public double titelHeight = 60;
-        public double sessionVGap = 10; 
-        public double sessionHGap = 10; 
+        public double sessionVGap = 10;
+        public double sessionHGap = 10;
         public double sessionHeight = 200;
     }
 }
