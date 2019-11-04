@@ -144,3 +144,39 @@
         -fx-border-radius: 2pt;
         -fx-border-insets: 2pt;*/
 }
+
+.scheduleSession {
+    -fx-background-color: devoxx_gradient;
+    -fx-background-radius: 5;
+
+    -fx-hgap: 10pt;
+    -fx-vgap: 8pt;
+    -fx-alignment: top-left;
+    -fx-padding: 5pt;
+    -fx-effect: dropshadow(three-pass-box, #060b33, 10, 0, 2, 2);
+    -fx-grid-lines-visible: false;
+}
+
+.scheduleSession .room {
+    -fx-text-fill: #060b33;
+    -fx-font-weight: bold;
+    -fx-font-size: 14pt;
+}
+
+.scheduleSession .title {
+    -fx-fill: #060b33;
+    -fx-font-size: 12pt;
+}
+
+.scheduleSession .speakerName {
+    -fx-fill: blanchedalmond;
+    /*-fx-font-size: 12pt;*/
+}
+
+.scheduleSession .speakerNames {
+    -fx-min_width: blanchedalmond;
+    /*-fx-font-size: 12pt;*/
+}
+
+.scheduleSession .speakerImage {
+}
