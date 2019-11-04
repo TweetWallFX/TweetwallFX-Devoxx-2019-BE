@@ -17,22 +17,22 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 75,
-                    "layoutY": 150,
+                    "layoutX": 65,
+                    "layoutY": 210,
                     "stepDuration": 500
                 }
             },
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19InfiniteScrollingTweets",
                 "config": {
-                    "layoutX": 1200,
-                    "layoutY": 150,
-                    "height": 850,
+                    "layoutX": 1050,
+                    "layoutY": 215,
+                    "height": 630,
                     "tweetGap": 10,
-                    "tweetWidth": 250,
+                    "tweetWidth": 200,
                     "stepDuration": 5000,
-                    "speed": 35,
-                    "columns": 2,
+                    "speed": 25,
+                    "columns": 3,
                     "columnGap": 10,
                     "numberOfTweets": 25,
                     "stepIdentifier": "rightHandSideInfiniteScrolling"
@@ -46,7 +46,7 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.NodeFadeOutStep",
                 "config": {
                     "nodeSelector": "#scheduleNode"
                 }
@@ -54,8 +54,8 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 75,
-                    "layoutY": 150,
+                    "layoutX": 65,
+                    "layoutY": 210,
                     "stepDuration": 500
                 }
             },
@@ -76,14 +76,14 @@
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.FadeInCloudStep",
                 "config": {
                     "layoutX": 1100,
-                    "layoutY": 300,
+                    "layoutY": 210,
                     "width": 800,
-                    "height": 600,
-                    "stepDuration": 30000
+                    "height": 550,
+                    "stepDuration": 15000
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.NodeFadeOutStep",
                 "config": {
                     "nodeSelector": "#scheduleNode"
                 }
@@ -91,13 +91,26 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 75,
-                    "layoutY": 150,
+                    "layoutX": 65,
+                    "layoutY": 210,
                     "stepDuration": 500
                 }
             },
             {
+                "stepClassName": "org.tweetwallfx.stepengine.steps.PauseStep",
+                "config": {
+                    "unit": "SECONDS",
+                    "amount": "15"
+                }
+            },
+            {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep"
+            },
+            {
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.NodeFadeOutStep",
+                "config": {
+                    "nodeSelector": "#scheduleNode"
+                }
             }
         ]
     }
