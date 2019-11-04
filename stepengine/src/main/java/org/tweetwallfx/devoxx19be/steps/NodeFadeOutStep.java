@@ -98,7 +98,7 @@ public class NodeFadeOutStep implements Step {
         private String nodeSelector;
 
         public String getNodeSelector() {
-            return nodeSelector;
+            return Objects.requireNonNull(nodeSelector, "nodeSelector must not be null!");
         }
 
         public void setNodeSelector(final String nodeSelector) {
