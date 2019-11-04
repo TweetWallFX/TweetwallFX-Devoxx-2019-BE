@@ -264,14 +264,17 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         name.getStyleClass().add("tweetUsername");
         name.setCache(config.speakerNameNode.isCacheEnabled);
         name.setCacheHint(config.speakerNameNode.cacheHint);
-        var vbox = new VBox(name, flow);
+        TextFlow nameFlow = new TextFlow(name);
+        nameFlow.setCache(config.tweetFlowNode.isCacheEnabled);
+        nameFlow.setCacheHint(config.tweetFlowNode.cacheHint);
+        var vbox = new VBox(nameFlow, flow);
         vbox.applyCss();
         vbox.layout();
         HBox tweet = new HBox(profileImageView, vbox);
         tweet.setMaxWidth(config.tweetWidth + 64 + 10);
         tweet.setPrefWidth(config.tweetWidth + 64 + 10);
 
-        VBox.setMargin(name, new Insets(0,0,5,0));
+        VBox.setMargin(nameFlow, new Insets(0,0,5,0));
         tweet.setCache(config.tweetOverallNode.isCacheEnabled);
         tweet.setCacheHint(config.tweetOverallNode.cacheHint);
 
