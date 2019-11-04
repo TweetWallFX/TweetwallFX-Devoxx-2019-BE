@@ -245,28 +245,25 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
         String textWithoutMediaUrls = displayTweet.getDisplayEnhancedText();
         Text text = new Text(textWithoutMediaUrls.replaceAll("[\n\r]", "|"));
-        text.setCache(true);
-        text.setCacheHint(CacheHint.SPEED);
+        text.setCache(config.tweetTextNode.isCacheEnabled);
+        text.setCacheHint(config.tweetTextNode.cacheHint);
         text.getStyleClass().add("tweetText");
         Image profileImage = tweetUserProfileImageDataProvider.getImageBig(displayTweet.getUser());
-//        BorderPane imageViewPane = new BorderPane();
-//        imageViewPane.getStyleClass().add("tweetProfileImage");
         ImageView profileImageView = new ImageView(profileImage);
         profileImageView.setSmooth(true);
-        profileImageView.setCacheHint(CacheHint.QUALITY);
-//        imageViewPane.setTop(profileImageView);
-//        BorderPane.setMargin(profileImageView, new Insets(0,0,0,0));
+        profileImageView.setCache(config.speakerImageNode.isCacheEnabled);
+        profileImageView.setCacheHint(config.speakerImageNode.cacheHint);
         TextFlow flow = new TextFlow(text);
         flow.getStyleClass().add("tweetFlow");
-        flow.setCache(true);
-        flow.setCacheHint(CacheHint.SPEED);
+        flow.setCache(config.tweetFlowNode.isCacheEnabled);
+        flow.setCacheHint(config.tweetFlowNode.cacheHint);
         flow.setMinWidth(config.tweetWidth);
         flow.setMaxWidth(config.tweetWidth);
         flow.setPrefWidth(config.tweetWidth);
         Text name = new Text(displayTweet.getUser().getName());
         name.getStyleClass().add("tweetUsername");
-        name.setCache(true);
-        name.setCacheHint(CacheHint.SPEED);
+        name.setCache(config.speakerNameNode.isCacheEnabled);
+        name.setCacheHint(config.speakerNameNode.cacheHint);
         var vbox = new VBox(name, flow);
         vbox.applyCss();
         vbox.layout();
@@ -275,9 +272,8 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         tweet.setPrefWidth(config.tweetWidth + 64 + 10);
 
         VBox.setMargin(name, new Insets(0,0,5,0));
-        tweet.setCacheHint(CacheHint.QUALITY);
-        tweet.setCache(true);
-//        tweet.setSpacing(10);
+        tweet.setCache(config.tweetOverallNode.isCacheEnabled);
+        tweet.setCacheHint(config.tweetOverallNode.cacheHint);
 
         Pane pane = tweet;
 
@@ -287,14 +283,16 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             var iv = new ImageView(image);
             iv.setPreserveRatio(true);
             iv.setFitWidth(config.tweetWidth + 64 + 5);
+            iv.setCache(config.tweetImageNode.isCacheEnabled);
+            iv.setCacheHint(config.tweetImageNode.cacheHint);
             var box = new VBox(iv, tweet);
             box.setAlignment(Pos.CENTER_LEFT);
             VBox.setMargin(iv, new Insets(5,5,5,5));
             HBox.setMargin(profileImageView, new Insets(0,5,5,5));
             HBox.setMargin(vbox, new Insets(0,5,5,0));
             box.getStyleClass().add("tweetDisplay");
-            box.setCacheHint(CacheHint.SPEED);
-            box.setCache(true);
+            box.setCache(config.tweetOverallNode.isCacheEnabled);
+            box.setCacheHint(config.tweetOverallNode.cacheHint);
             pane = box;
         } else {
             tweet.getStyleClass().add("tweetDisplay");
@@ -378,5 +376,17 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         public double columnGap = tweetGap;
         public int numberOfTweets = 25;
         public String stepIdentifier = Devoxx19InfiniteScrollingTweets.class.getName();
+
+        public NodeCacheConfig speakerNameNode = new NodeCacheConfig();
+        public NodeCacheConfig speakerImageNode = new NodeCacheConfig();
+        public NodeCacheConfig tweetTextNode = new NodeCacheConfig();
+        public NodeCacheConfig tweetFlowNode = new NodeCacheConfig();
+        public NodeCacheConfig tweetImageNode = new NodeCacheConfig();
+        public NodeCacheConfig tweetOverallNode = new NodeCacheConfig();
+
+        public static class NodeCacheConfig {
+            public boolean isCacheEnabled = true;
+            public CacheHint cacheHint = CacheHint.QUALITY;
+        }
     }
 }
