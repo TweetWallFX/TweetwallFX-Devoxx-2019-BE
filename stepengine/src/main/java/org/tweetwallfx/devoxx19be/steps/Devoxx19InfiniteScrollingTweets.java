@@ -178,7 +178,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     private int next = 0;
 
     private Tweet getNextTweet() {
-        if (next >= config.numberOfTweets - 1) {
+        if (next >= config.numberOfTweets - 1 || next >= tweets.size()) {
             next = 0;
             updateTweetList();
         }
