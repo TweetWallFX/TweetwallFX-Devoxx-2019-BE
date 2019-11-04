@@ -11,6 +11,10 @@
                 "config": {
                     "layoutX": 103,
                     "layoutY": 200,
+                    "showAvatar": true,
+                    "avatarArcSize": 16,
+                    "avatarSize": 50,
+                    "avatarSpacing": 4,
                     "stepDuration": 500
                 }
             },

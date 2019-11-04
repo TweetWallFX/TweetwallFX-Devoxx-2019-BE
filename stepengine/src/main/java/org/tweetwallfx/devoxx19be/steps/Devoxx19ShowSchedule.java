@@ -24,27 +24,32 @@
 package org.tweetwallfx.devoxx19be.steps;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
 import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.ScheduleDataProvider;
 import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.SessionData;
+import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.SpeakerImageProvider;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.Step;
 import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
@@ -90,7 +95,7 @@ public class Devoxx19ShowSchedule implements Step {
 
                 Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
                 while (iterator.hasNext()) {
-                    Node node = createSessionNode(iterator.next());
+                    Node node = createSessionNode(context, iterator.next());
                     grid.getChildren().add(node);
                     GridPane.setColumnIndex(node, col);
                     GridPane.setRowIndex(node, row);
@@ -100,7 +105,7 @@ public class Devoxx19ShowSchedule implements Step {
                     }
                 }
 
-                Platform.runLater(() ->  {
+                Platform.runLater(() -> {
                     wordleSkin.getPane().getChildren().add(scheduleNode);
                     fadeIn.play();
                 });
@@ -120,24 +125,63 @@ public class Devoxx19ShowSchedule implements Step {
         return java.time.Duration.ofMillis(config.stepDuration);
     }
 
-    private Node createSessionNode(final SessionData sessionData) {
-        try {
-            Node session = FXMLLoader.<Node>load(this.getClass().getResource("/session.fxml"));
-            Text title = (Text) session.lookup("#title");
-            title.setText(sessionData.title);
-            Text speakers = (Text) session.lookup("#speakers");
-            speakers.setText(sessionData.speakers.stream().collect(Collectors.joining(", ")));
-            Label room = (Label) session.lookup("#room");
-            room.setText(sessionData.room);
-            Label startTime = (Label) session.lookup("#startTime");
-            startTime.setText(sessionData.beginTime + " - " + sessionData.endTime);
-            session.setCacheHint(CacheHint.SPEED);
-            session.setCache(true);
-            return session;
-        } catch (IOException ex) {
-            LOGGER.error(ex);
-            throw new IllegalStateException(ex);
+    private Node createSessionNode(final MachineContext context, final SessionData sessionData) {
+        final GridPane gridPane = new GridPane();
+        gridPane.getStyleClass().add("scheduleSession");
+
+        var speakerNames = new Text(sessionData.speakers.stream().collect(Collectors.joining(", ")));
+        speakerNames.getStyleClass().add("speakerName");
+        var speakerNamesFlow = new TextFlow(speakerNames);
+        speakerNamesFlow.getStyleClass().add("speakers");
+        speakerNamesFlow.setTextAlignment(TextAlignment.RIGHT);
+        gridPane.add(speakerNamesFlow, 2, 0, 1, 2);
+        GridPane.setHalignment(speakerNamesFlow, HPos.RIGHT);
+        GridPane.setValignment(speakerNamesFlow, VPos.TOP);
+        GridPane.setHgrow(speakerNamesFlow, Priority.ALWAYS);
+        GridPane.setVgrow(speakerNamesFlow, Priority.NEVER);
+
+        if (config.showAvatar) {
+            var apeakerImageProvider = context.getDataProvider(SpeakerImageProvider.class);
+            var speakerImages = new HBox(config.avatarSpacing, sessionData.speakerObjects.stream()
+                    .map(apeakerImageProvider::getSpeakerImage)
+                    .map(ImageView::new)
+                    .peek(img -> {
+                        // general image sizing
+                        img.getStyleClass().add("speakerImage");
+                        img.setFitHeight(config.avatarSize);
+                        img.setFitWidth(config.avatarSize);
+                    })
+                    .peek(img -> {
+                        // avatar image clipping
+                        Rectangle clip = new Rectangle(config.avatarSize, config.avatarSize);
+                        clip.setArcWidth(config.avatarArcSize);
+                        clip.setArcHeight(config.avatarArcSize);
+                        img.setClip(clip);
+                    })
+                    .toArray(Node[]::new)
+            );
+            gridPane.add(speakerImages, 1, 0, 1, 2);
+            GridPane.setHgrow(speakerImages, Priority.NEVER);
         }
+
+        final Text room = new Text(sessionData.room);
+        room.getStyleClass().add("room");
+        gridPane.add(room, 0, 0, 1, 1);
+
+        final Text times = new Text(sessionData.beginTime + " - " + sessionData.endTime);
+        times.getStyleClass().add("times");
+        gridPane.add(times, 0, 1, 1, 1);
+        GridPane.setValignment(times, VPos.BASELINE);
+        GridPane.setVgrow(times, Priority.ALWAYS);
+
+        final Text titleText = new Text(sessionData.title);
+        final TextFlow title = new TextFlow(titleText);
+        title.getStyleClass().add("title");
+        gridPane.add(title, 0, 2, 3, 1);
+        GridPane.setHalignment(room, HPos.LEFT);
+        GridPane.setValignment(room, VPos.BOTTOM);
+
+        return gridPane;
     }
 
     /**
@@ -158,7 +202,7 @@ public class Devoxx19ShowSchedule implements Step {
 
         @Override
         public Collection<Class<? extends DataProvider>> getRequiredDataProviders(final StepEngineSettings.StepDefinition stepSettings) {
-            return Arrays.asList(ScheduleDataProvider.class);
+            return Arrays.asList(ScheduleDataProvider.class, SpeakerImageProvider.class);
         }
     }
 
@@ -166,5 +210,9 @@ public class Devoxx19ShowSchedule implements Step {
 
         public double layoutX = 0;
         public double layoutY = 0;
+        public boolean showAvatar = false;
+        public int avatarSize = 64;
+        public int avatarArcSize = 20;
+        public int avatarSpacing = 4;
     }
 }
