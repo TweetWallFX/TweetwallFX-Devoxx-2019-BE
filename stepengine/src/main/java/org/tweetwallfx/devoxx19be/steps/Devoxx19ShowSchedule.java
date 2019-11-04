@@ -99,12 +99,11 @@ public class Devoxx19ShowSchedule implements Step {
                         row++;
                     }
                 }
-                
+
                 Platform.runLater(() ->  {
-                    wordleSkin.getPane().getChildren().add(scheduleNode);                    
+                    wordleSkin.getPane().getChildren().add(scheduleNode);
                     fadeIn.play();
                 });
-                
             } catch (IOException ex) {
                 LOGGER.error(ex);
             }
@@ -115,7 +114,7 @@ public class Devoxx19ShowSchedule implements Step {
     public boolean requiresPlatformThread() {
         return false;
     }
-    
+
     @Override
     public java.time.Duration preferredStepDuration(final MachineContext context) {
         return java.time.Duration.ofMillis(config.stepDuration);
