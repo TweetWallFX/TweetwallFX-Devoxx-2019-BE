@@ -154,7 +154,7 @@
     -fx-vgap: 8pt;
     -fx-alignment: top-left;
     -fx-padding: 5pt;
-    -fx-effect: dropshadow(three-pass-box, #060b33, 10, 0, 2, 2);
+    /*-fx-effect: dropshadow(three-pass-box, #060b33, 10, 0, 2, 2);*/
     -fx-grid-lines-visible: false;
 }
 

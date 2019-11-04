@@ -81,6 +81,7 @@ public class Devoxx19ShowSchedule implements Step {
         if (null == wordleSkin.getNode().lookup("#scheduleNode")) {
 
             Pane scheduleNode = new Pane();
+            scheduleNode.setId("scheduleNode");
             scheduleNode.setOpacity(0);
 
             var titel = new Label("Upcoming Talks");
@@ -111,7 +112,7 @@ public class Devoxx19ShowSchedule implements Step {
 
             Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
             while (iterator.hasNext()) {
-                Pane sessionPane = createSessionNode(iterator.next());
+                Pane sessionPane = createSessionNode(context, iterator.next());                
                 double sessionWidth = (config.width - config.sessionHGap) / 2.0 ;
                 sessionPane.setMinWidth(sessionWidth);
                 sessionPane.setMaxWidth(sessionWidth);
@@ -145,7 +146,7 @@ public class Devoxx19ShowSchedule implements Step {
         return java.time.Duration.ofMillis(config.stepDuration);
     }
 
-    private Node createSessionNode(final MachineContext context, final SessionData sessionData) {
+    private Pane createSessionNode(final MachineContext context, final SessionData sessionData) {
         final GridPane gridPane = new GridPane();
         gridPane.getStyleClass().add("scheduleSession");
 

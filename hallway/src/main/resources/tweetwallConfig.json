@@ -10,10 +10,10 @@
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
                     "layoutX": 103,
-                    "layoutY": 200,
+                    "layoutY": 100,
                     "showAvatar": true,
                     "avatarArcSize": 16,
-                    "avatarSize": 50,
+                    "avatarSize": 64,
                     "avatarSpacing": 4,
                     "width": 1200,
                     "stepDuration": 500
