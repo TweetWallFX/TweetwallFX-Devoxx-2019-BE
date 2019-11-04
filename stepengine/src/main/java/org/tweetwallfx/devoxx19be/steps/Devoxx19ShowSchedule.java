@@ -33,17 +33,21 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
+import javax.ws.rs.HEAD;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
@@ -75,44 +79,60 @@ public class Devoxx19ShowSchedule implements Step {
         final ScheduleDataProvider dataProvider = context.getDataProvider(ScheduleDataProvider.class);
 
         if (null == wordleSkin.getNode().lookup("#scheduleNode")) {
-            try {
-                Node scheduleNode = FXMLLoader.<Node>load(this.getClass().getResource("/schedule.fxml"));
-                scheduleNode.setOpacity(0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(500), scheduleNode);
-                fadeIn.setFromValue(0);
-                fadeIn.setToValue(1);
-                fadeIn.setOnFinished(e -> {
-                    LOGGER.info("Calling proceed from Devoxx19SchowSchedule");
-                    context.proceed();
-                });
-                scheduleNode.setLayoutX(config.layoutX);
-                scheduleNode.setLayoutY(config.layoutY);
-                scheduleNode.setCacheHint(CacheHint.SPEED);
-                scheduleNode.setCache(true);
-                GridPane grid = (GridPane) scheduleNode.lookup("#sessionGrid");
-                int col = 0;
-                int row = 0;
 
-                Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
-                while (iterator.hasNext()) {
-                    Node node = createSessionNode(context, iterator.next());
-                    grid.getChildren().add(node);
-                    GridPane.setColumnIndex(node, col);
-                    GridPane.setRowIndex(node, row);
-                    col = (col == 0) ? 1 : 0;
-                    if (col == 0) {
-                        row++;
-                    }
+            Pane scheduleNode = new Pane();
+            scheduleNode.setOpacity(0);
+
+            var titel = new Label("Upcoming Talks");
+
+            titel.setPrefWidth(config.width);
+            titel.setStyle("-fx-background-color: devoxx_gradient; -fx-background-radius: 10; -fx-text-fill: #060b33; -fx-font-size: 20pt; -fx-font-weight: bold;");
+            titel.setPrefHeight(config.titelHeight);
+            titel.setAlignment(Pos.CENTER);
+            
+            scheduleNode.getChildren().add(titel);
+            
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(500), scheduleNode);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.setOnFinished(e -> {
+                LOGGER.info("Calling proceed from Devoxx19SchowSchedule");
+                context.proceed();
+            });
+            scheduleNode.setLayoutX(config.layoutX);
+            scheduleNode.setLayoutY(config.layoutY);
+            scheduleNode.setMinWidth(config.width);
+            scheduleNode.setMaxWidth(config.width);
+            scheduleNode.setPrefWidth(config.width);
+            scheduleNode.setCacheHint(CacheHint.SPEED);
+            scheduleNode.setCache(true);
+            int col = 0;
+            int row = 0;
+
+            Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
+            while (iterator.hasNext()) {
+                Pane sessionPane = createSessionNode(iterator.next());
+                double sessionWidth = (config.width - config.sessionHGap) / 2.0 ;
+                sessionPane.setMinWidth(sessionWidth);
+                sessionPane.setMaxWidth(sessionWidth);
+                sessionPane.setPrefWidth(sessionWidth);
+                sessionPane.setMinHeight(config.sessionHeight);
+                sessionPane.setMaxHeight(config.sessionHeight);
+                sessionPane.setPrefHeight(config.sessionHeight);
+                sessionPane.setLayoutX(col * (sessionWidth + config.sessionHGap) );
+                sessionPane.setLayoutY(config.titelHeight + config.sessionVGap + (config.sessionHeight + config.sessionVGap) * row);
+                scheduleNode.getChildren().add(sessionPane);
+                col = (col == 0) ? 1 : 0;
+                if (col == 0) {
+                    row++;
                 }
-
-                Platform.runLater(() -> {
-                    wordleSkin.getPane().getChildren().add(scheduleNode);
-                    fadeIn.play();
-                });
-            } catch (IOException ex) {
-                LOGGER.error(ex);
             }
-        }
+
+            Platform.runLater(() ->  {
+                wordleSkin.getPane().getChildren().add(scheduleNode);
+                fadeIn.play();
+            });
+       }
     }
 
     @Override
@@ -214,5 +234,10 @@ public class Devoxx19ShowSchedule implements Step {
         public int avatarSize = 64;
         public int avatarArcSize = 20;
         public int avatarSpacing = 4;
+        public double width = 800;
+        public double titelHeight = 60;
+        public double sessionVGap = 10; 
+        public double sessionHGap = 10; 
+        public double sessionHeight = 200;
     }
 }

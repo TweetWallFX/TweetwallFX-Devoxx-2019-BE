@@ -15,6 +15,7 @@
                     "avatarArcSize": 16,
                     "avatarSize": 50,
                     "avatarSpacing": 4,
+                    "width": 1200,
                     "stepDuration": 500
                 }
             },
