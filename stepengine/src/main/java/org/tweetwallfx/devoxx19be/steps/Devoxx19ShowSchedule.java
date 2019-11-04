@@ -81,17 +81,18 @@ public class Devoxx19ShowSchedule implements Step {
         if (null == wordleSkin.getNode().lookup("#scheduleNode")) {
 
             Pane scheduleNode = new Pane();
+            scheduleNode.getStyleClass().add("schedule");
             scheduleNode.setId("scheduleNode");
             scheduleNode.setOpacity(0);
 
-            var titel = new Label("Upcoming Talks");
+            var title = new Label("Upcoming Talks");
 
-            titel.setPrefWidth(config.width);
-            titel.setStyle("-fx-background-color: devoxx_gradient; -fx-background-radius: 10; -fx-text-fill: #060b33; -fx-font-size: 20pt; -fx-font-weight: bold;");
-            titel.setPrefHeight(config.titelHeight);
-            titel.setAlignment(Pos.CENTER);
+            title.setPrefWidth(config.width);
+            title.getStyleClass().add("title");
+            title.setPrefHeight(config.titleHeight);
+            title.setAlignment(Pos.CENTER);
 
-            scheduleNode.getChildren().add(titel);
+            scheduleNode.getChildren().add(title);
 
             FadeTransition fadeIn = new FadeTransition(Duration.millis(500), scheduleNode);
             fadeIn.setFromValue(0);
@@ -121,7 +122,7 @@ public class Devoxx19ShowSchedule implements Step {
                 sessionPane.setMaxHeight(config.sessionHeight);
                 sessionPane.setPrefHeight(config.sessionHeight);
                 sessionPane.setLayoutX(col * (sessionWidth + config.sessionHGap) );
-                sessionPane.setLayoutY(config.titelHeight + config.sessionVGap + (config.sessionHeight + config.sessionVGap) * row);
+                sessionPane.setLayoutY(config.titleHeight + config.sessionVGap + (config.sessionHeight + config.sessionVGap) * row);
                 scheduleNode.getChildren().add(sessionPane);
                 col = (col == 0) ? 1 : 0;
                 if (col == 0) {
@@ -236,7 +237,7 @@ public class Devoxx19ShowSchedule implements Step {
         public int avatarArcSize = 20;
         public int avatarSpacing = 4;
         public double width = 800;
-        public double titelHeight = 60;
+        public double titleHeight = 60;
         public double sessionVGap = 10;
         public double sessionHGap = 10;
         public double sessionHeight = 200;
