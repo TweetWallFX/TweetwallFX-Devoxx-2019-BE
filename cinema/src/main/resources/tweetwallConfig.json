@@ -102,7 +102,7 @@
                     "unit": "SECONDS",
                     "amount": "15"
                 }
-            },            
+            },
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep"
             },
