@@ -2,8 +2,7 @@ org.tweetwallfx.devoxx19be.steps.Devoxx19FlipInTweets$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTopTalks$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.Devoxx19FlipOutTweets$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule$FactoryImpl
-org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedToday$FactoryImpl
-org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRatedWeek$FactoryImpl
+org.tweetwallfx.devoxx19be.steps.Devoxx19ShowTopRated$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.mosaic.ImageMosaicCreateStep$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.cloud.FadeInCloudStep$FactoryImpl
 org.tweetwallfx.devoxx19be.steps.cloud.CloudFadeOutStep$FactoryImpl
