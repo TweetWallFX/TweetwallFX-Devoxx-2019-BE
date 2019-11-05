@@ -244,7 +244,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
             final Tweet displayTweet) {
 
         String textWithoutMediaUrls = displayTweet.getDisplayEnhancedText();
-        Text text = new Text(textWithoutMediaUrls.replaceAll("[\n\r]", "|"));
+        Text text = new Text(textWithoutMediaUrls.replaceAll("[\n\r]+", config.respectLineFeeds ? "\n": "|"));
         text.setCache(config.tweetTextNode.isCacheEnabled);
         text.setCacheHint(config.tweetTextNode.cacheHint);
         text.getStyleClass().add("tweetText");
@@ -379,7 +379,8 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         public double columnGap = tweetGap;
         public int numberOfTweets = 25;
         public String stepIdentifier = Devoxx19InfiniteScrollingTweets.class.getName();
-
+        public boolean respectLineFeeds = true;
+        
         public NodeCacheConfig speakerNameNode = new NodeCacheConfig();
         public NodeCacheConfig speakerImageNode = new NodeCacheConfig();
         public NodeCacheConfig tweetTextNode = new NodeCacheConfig();
