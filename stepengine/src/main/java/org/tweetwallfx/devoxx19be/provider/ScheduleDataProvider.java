@@ -94,7 +94,7 @@ public class ScheduleDataProvider implements DataProvider, DataProvider.Schedule
     }
 
     /**
-     * POJO used to configure {@link TopTalksWeekDataProvider}.
+     * POJO used to configure {@link ScheduleDataProvider}.
      */
     public static class Config implements ScheduledConfig {
 
