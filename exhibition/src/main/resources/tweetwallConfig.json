@@ -11,6 +11,7 @@
                 "config": {
                     "layoutX": 103,
                     "layoutY": 200,
+                    "sessionHeight": 150,
                     "showAvatar": true,
                     "avatarArcSize": 16,
                     "avatarSize": 50,
@@ -21,12 +22,12 @@
             {
                 "stepClassName": "org.tweetwallfx.stepengine.steps.PauseStep",
                 "config": {
-                    "amount": 6,
+                    "amount": 10,
                     "unit": "SECONDS"
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.controls.steps.NodeFadeOutStep",
+                "stepClassName": "org.tweetwallfx.devoxx19be.steps.NodeFadeOutStep",
                 "config": {
                     "nodeSelector": "#scheduleNode"
                 }

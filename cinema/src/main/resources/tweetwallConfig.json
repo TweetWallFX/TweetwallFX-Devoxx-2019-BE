@@ -17,8 +17,10 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 65,
-                    "layoutY": 210,
+                    "layoutX": 35,
+                    "layoutY": 215,
+                    "width": 980,
+                    "sessionHeight": 150,
                     "showAvatar": true,
                     "avatarArcSize": 16,
                     "avatarSize": 50,
@@ -58,8 +60,14 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 65,
-                    "layoutY": 210,
+                    "layoutX": 35,
+                    "layoutY": 215,
+                    "width": 980,
+                    "sessionHeight": 150,
+                    "showAvatar": true,
+                    "avatarArcSize": 16,
+                    "avatarSize": 50,
+                    "avatarSpacing": 4,
                     "stepDuration": 500
                 }
             },
@@ -95,8 +103,10 @@
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
                 "config": {
-                    "layoutX": 65,
-                    "layoutY": 210,
+                    "layoutX": 35,
+                    "layoutY": 215,
+                    "width": 980,
+                    "sessionHeight": 150,
                     "showAvatar": true,
                     "avatarArcSize": 16,
                     "avatarSize": 50,

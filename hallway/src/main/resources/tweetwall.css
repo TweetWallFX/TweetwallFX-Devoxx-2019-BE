@@ -153,30 +153,43 @@
     -fx-vgap: 8pt;
     -fx-alignment: top-left;
     -fx-padding: 5pt;
-    -fx-effect: dropshadow(three-pass-box, #060b33, 10, 0, 2, 2);
+    /*-fx-effect: dropshadow(three-pass-box, #060b33, 10, 0, 2, 2);*/
     -fx-grid-lines-visible: false;
 }
 
 .scheduleSession .room {
     -fx-text-fill: #060b33;
     -fx-font-weight: bold;
-    -fx-font-size: 14pt;
+    -fx-font-size: 20pt;
 }
 
 .scheduleSession .title {
     -fx-fill: #060b33;
-    -fx-font-size: 12pt;
+    -fx-font-size: 18pt;
+}
+
+.scheduleSession .times {
+    -fx-fill: #060b33;
+    -fx-font-size: 18pt;
 }
 
 .scheduleSession .speakerName {
-    -fx-fill: blanchedalmond;
-    /*-fx-font-size: 12pt;*/
+    -fx-fill: #060b33;
+    -fx-font-size: 18pt;
 }
 
-.scheduleSession .speakerNames {
+.scheduleSession .speakers {
     -fx-min_width: blanchedalmond;
     /*-fx-font-size: 12pt;*/
 }
 
 .scheduleSession .speakerImage {
+}
+
+.schedule .title {
+    -fx-background-color: devoxx_gradient;
+    -fx-background-radius: 10;
+    -fx-text-fill: #060b33;
+    -fx-font-size: 20pt;
+    -fx-font-weight: bold;
 }

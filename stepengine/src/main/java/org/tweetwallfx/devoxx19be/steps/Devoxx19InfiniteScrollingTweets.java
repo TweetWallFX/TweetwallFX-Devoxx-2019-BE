@@ -316,7 +316,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         shutdownCountdown = new CountDownLatch(2);
         this.isTerminated = true;
         Platform.runLater(() -> {
-            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId().startsWith("infiniteStream")).forEach(pane -> {
+            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId() != null && p.getId().startsWith("infiniteStream")).forEach(pane -> {
                 LOG.info("Shutting down " + pane.getId());
                 for (Node nodeToFadeOut : pane.getChildren()) {
                     var fadeOut = new FadeTransition(Duration.millis(1500), nodeToFadeOut);

@@ -47,7 +47,7 @@
       <Label id="voteCount" layoutX="10.0" layoutY="60.0" text="1234 Votes" style="-fx-text-fill: #060b33" textAlignment="CENTER" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="60.0" />
       <ImageView id="speakerImage" fitHeight="64.0" fitWidth="64.0" layoutX="94.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
    </children>
-   <effect>
+    <effect>
       <DropShadow color="#060b33" offsetX="2.0" offsetY="2.0" />
-   </effect>
+    </effect>  
 </AnchorPane>
