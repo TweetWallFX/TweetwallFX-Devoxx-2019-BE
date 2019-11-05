@@ -182,7 +182,7 @@
 .scheduleSession .speakerImage {
 }
 
-.schedule > title {
+.schedule > .title {
     -fx-background-color: devoxx_gradient;
     -fx-background-radius: 10;
     -fx-text-fill: #060b33;
