@@ -23,6 +23,7 @@
  */
 package org.tweetwallfx.devoxx19be.steps;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,9 +49,9 @@ import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
-import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.ScheduleDataProvider;
-import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.SessionData;
 import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.SpeakerImageProvider;
+import org.tweetwallfx.devoxx19be.provider.ScheduleDataProvider;
+import org.tweetwallfx.devoxx19be.provider.SessionData;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.Step;
 import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
@@ -193,12 +194,28 @@ public class Devoxx19ShowSchedule implements Step {
         GridPane.setValignment(times, VPos.BASELINE);
         GridPane.setVgrow(times, Priority.ALWAYS);
 
+        FontAwesomeIconView faiFavCount = new FontAwesomeIconView();
+        faiFavCount.getStyleClass().setAll("favoriteGlyph");
+
+        if (config.showFavourite) {
+            final HBox favourites = new HBox();
+            var favLabel = new Label("" + sessionData.favouritesCount);
+            favLabel.getStyleClass().setAll("favoriteCount");
+            favourites.getChildren().addAll(faiFavCount , favLabel);
+            favourites.setAlignment(Pos.CENTER_LEFT);
+            favourites.setSpacing(5);
+            gridPane.add(favourites, 0, 2, 3, 1);
+            GridPane.setHalignment(favourites, HPos.LEFT);
+            GridPane.setValignment(favourites, VPos.BOTTOM);
+            GridPane.setVgrow(favourites, Priority.NEVER);
+        }
+
         final Text titleText = new Text(sessionData.title);
         final TextFlow title = new TextFlow(titleText);
         title.getStyleClass().add("title");
-        gridPane.add(title, 0, 2, 3, 1);
-        GridPane.setHalignment(room, HPos.LEFT);
-        GridPane.setValignment(room, VPos.BOTTOM);
+        gridPane.add(title, 0, 3, 3, 1);
+        GridPane.setHalignment(title, HPos.LEFT);
+        GridPane.setValignment(title, VPos.BOTTOM);
 
         return gridPane;
     }
@@ -233,6 +250,7 @@ public class Devoxx19ShowSchedule implements Step {
         public int avatarSize = 64;
         public int avatarArcSize = 20;
         public int avatarSpacing = 4;
+        public boolean showFavourite = false;
         public double width = 800;
         public double titleHeight = 60;
         public double sessionVGap = 10;

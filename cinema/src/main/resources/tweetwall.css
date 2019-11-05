@@ -166,7 +166,7 @@
 
 .scheduleSession  > .title {
     -fx-fill: #060b33;
-    -fx-font-size: 12pt;
+    -fx-font-size: 13pt;
 }
 
 .scheduleSession .speakerName {
@@ -180,6 +180,17 @@
 }
 
 .scheduleSession .speakerImage {
+}
+
+.scheduleSession .favoriteGlyph {
+    -glyph-name: "HEART";
+    -glyph-size: 10pt;
+    -fx-fill: #060b33;
+}
+
+.scheduleSession .favoriteCount {
+    -fx-text-fill: #060b33;
+    -fx-font-size: 10pt;
 }
 
 .schedule > .title {
