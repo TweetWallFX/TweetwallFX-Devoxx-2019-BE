@@ -23,14 +23,12 @@
  */
 package org.tweetwallfx.devoxx19be.steps;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.geometry.Pos;
@@ -47,7 +45,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import javax.ws.rs.HEAD;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
