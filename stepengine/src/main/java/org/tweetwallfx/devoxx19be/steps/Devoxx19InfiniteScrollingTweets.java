@@ -28,7 +28,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -72,13 +75,14 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
     private final Config config;
 
-    private List<Tweet> tweets;
+    private final AtomicReference<List<Tweet>> tweetsRef = new AtomicReference<>(Collections.emptyList());
 
     private TweetUserProfileImageDataProvider tweetUserProfileImageDataProvider;
     private PhotoImageMediaEntryDataProvider photoImageMediaEntryDataProvider;
     private TweetStreamDataProvider tweetStreamDataProvider;
     private WordleSkin wordleSkin;
     private CountDownLatch shutdownCountdown;
+    private final AtomicInteger next = new AtomicInteger(0);
 
     private volatile boolean isTerminated = false;
 
@@ -116,8 +120,9 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     }
 
     private void updateTweetList() {
-        tweets = tweetStreamDataProvider.getTweets();
-        Collections.reverse(tweets);
+        tweetsRef.set(new CopyOnWriteArrayList<>(tweetStreamDataProvider.getTweets()));
+        LOG.info("Updated tweet list to be streamed. Now contains " + tweetsRef.get().size());
+        next.set(0);
     }
 
     void initializePane(Pane pane) {
@@ -175,15 +180,14 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         scrollIn(createNode(), pane).play();
     }
 
-    private int next = 0;
-
     private Tweet getNextTweet() {
-        if (next >= config.numberOfTweets - 1 || next >= tweets.size()) {
-            next = 0;
+       var tweets = tweetsRef.get();
+       var listPointer = next.get();
+        if (listPointer >= config.numberOfTweets - 1 || listPointer >= tweets.size()) {
+            next.set(0);
             updateTweetList();
         }
-        var tweet = tweets.get(next);
-        next++;
+        var tweet = tweets.get(next.getAndAdd(1));
         return tweet;
     }
 
