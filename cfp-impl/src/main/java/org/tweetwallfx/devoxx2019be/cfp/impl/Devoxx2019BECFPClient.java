@@ -452,6 +452,7 @@ public class Devoxx2019BECFPClient implements CFPClient {
         if (input.isOverflow()) {
             result.setTitle("Overflow");
         } else {
+            result.setFavoritesCount(input.getTotalFavourites());
             result.setTitle(input.getTalkTitle());
         }
 //        result.setTrackId(Integer.toString(input.getTrackId()));
