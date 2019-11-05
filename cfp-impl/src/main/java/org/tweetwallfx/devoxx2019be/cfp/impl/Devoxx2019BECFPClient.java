@@ -443,13 +443,17 @@ public class Devoxx2019BECFPClient implements CFPClient {
                 .map(this::convertToSpeakerReference)
                 .collect(Collectors.toList()));
         result.setSummary(input.getTalkDescription());
-//        result.setSummaryAsHtml(input.);
         result.setTags(input.getTags().stream()
                 .map(this::convertToTag)
                 .collect(Collectors.toList()));
         result.setTalkType(input.getSessionTypeName());
-        result.setTitle(input.getTalkTitle());
         result.setTrack(input.getTrackName());
+
+        if (input.isOverflow()) {
+            result.setTitle("Overflow");
+        } else {
+            result.setTitle(input.getTalkTitle());
+        }
 //        result.setTrackId(Integer.toString(input.getTrackId()));
 //        result.setVideoURL(input.getAfterVideoURL());
 
