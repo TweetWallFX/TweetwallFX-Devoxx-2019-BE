@@ -380,7 +380,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         public int numberOfTweets = 25;
         public String stepIdentifier = Devoxx19InfiniteScrollingTweets.class.getName();
         public boolean respectLineFeeds = true;
-        
+
         public NodeCacheConfig speakerNameNode = new NodeCacheConfig();
         public NodeCacheConfig speakerImageNode = new NodeCacheConfig();
         public NodeCacheConfig tweetTextNode = new NodeCacheConfig();
