@@ -58,6 +58,7 @@ public class SessionData {
     public final String roomSetup;
     public final List<SpeakerReference> speakerObjects;
     public final int favouritesCount;
+    public final String trackImageUrl;
 
     private SessionData(final ScheduleSlot slot) {
         this.room = slot.getRoomName();
@@ -69,6 +70,7 @@ public class SessionData {
         this.roomSetup = slot.getRoomSetup();
         this.endTime = slot.getToTime();
         this.favouritesCount = slot.getTalk().getFavoritesCount();
+        this.trackImageUrl = slot.getTalk().getTrackImageURL();
     }
 
     /**

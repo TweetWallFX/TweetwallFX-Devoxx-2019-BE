@@ -454,6 +454,7 @@ public class Devoxx2019BECFPClient implements CFPClient {
         } else {
             result.setFavoritesCount(input.getTotalFavourites());
             result.setTitle(input.getTalkTitle());
+            result.setTrackImageURL(input.getTrackImageURL());
         }
 //        result.setTrackId(Integer.toString(input.getTrackId()));
 //        result.setVideoURL(input.getAfterVideoURL());
