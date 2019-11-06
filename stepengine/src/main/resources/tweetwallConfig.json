@@ -24,6 +24,9 @@
                         "stepClassName": "org.tweetwallfx.tweet.api.filter.MaxHashtagLengthFilterStep"
                     },
                     {
+                        "stepClassName": "org.tweetwallfx.devoxx19be.filter.ContainsTextPhraseRejectFilterStep"
+                    },
+                    {
                         "stepClassName": "org.tweetwallfx.google.vision.ImageContentFilterStep"
                     }
                 ]
@@ -73,6 +76,12 @@
         "violence": {
             "acceptableLikelyhood": "VERY_UNLIKELY"
         }
+    },
+    "org.tweetwallfx.devoxx19be.filter.ContainsTextPhraseRejectFilterStep$Config": {
+        "checkRetweeted": true,
+        "textPhrases": [
+            "xx18xx"
+        ]
     },
     "org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.ScheduleDataProvider": {
         "initialDelay": 0,
