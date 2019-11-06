@@ -43,7 +43,8 @@
                     "columns": 3,
                     "columnGap": 10,
                     "numberOfTweets": 50,
-                    "stepIdentifier": "rightHandSideInfiniteScrolling"
+                    "stepIdentifier": "rightHandSideInfiniteScrolling",
+                    "vOffset": 400
                 }
             },
             {
