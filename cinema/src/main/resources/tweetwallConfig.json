@@ -69,6 +69,7 @@
                     "avatarArcSize": 16,
                     "avatarSize": 50,
                     "avatarSpacing": 4,
+                    "showFavourite": true,
                     "stepDuration": 500
                 }
             },
@@ -112,6 +113,7 @@
                     "avatarArcSize": 16,
                     "avatarSize": 50,
                     "avatarSpacing": 4,
+                    "showFavourite": true,
                     "stepDuration": 500
                 }
             },

@@ -163,27 +163,30 @@
     -fx-font-size: 20pt;
 }
 
-.scheduleSession > .title {
+.scheduleSession > .sessionBottomPane > .titlePane > .title {
+    -fx-text-fill: #060b33;
+    -fx-font-size: 18pt;
+}
+
+.scheduleSession > .sessionTopPane > .times {
     -fx-fill: #060b33;
     -fx-font-size: 18pt;
 }
 
-.scheduleSession .times {
+.scheduleSession > .sessionTopPane > .speakerName {
     -fx-fill: #060b33;
     -fx-font-size: 18pt;
 }
 
-.scheduleSession .speakerName {
+.scheduleSession .favoriteGlyph {
+    -glyph-name: "HEART";
+    -glyph-size: 10pt;
     -fx-fill: #060b33;
-    -fx-font-size: 18pt;
 }
 
-.scheduleSession .speakers {
-    -fx-min_width: blanchedalmond;
-    /*-fx-font-size: 12pt;*/
-}
-
-.scheduleSession .speakerImage {
+.scheduleSession .favoriteCount {
+    -fx-text-fill: #060b33;
+    -fx-font-size: 10pt;
 }
 
 .schedule > .title {

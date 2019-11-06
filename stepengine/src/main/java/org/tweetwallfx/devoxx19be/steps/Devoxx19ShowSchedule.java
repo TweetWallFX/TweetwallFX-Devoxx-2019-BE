@@ -30,21 +30,17 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +48,7 @@ import org.tweetwallfx.controls.WordleSkin;
 import org.tweetwallfx.devoxx.cfp.stepengine.dataprovider.SpeakerImageProvider;
 import org.tweetwallfx.devoxx19be.provider.ScheduleDataProvider;
 import org.tweetwallfx.devoxx19be.provider.SessionData;
+import org.tweetwallfx.devoxx19be.provider.TrackImageDataProvider;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.Step;
 import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
@@ -77,7 +74,6 @@ public class Devoxx19ShowSchedule implements Step {
         final ScheduleDataProvider dataProvider = context.getDataProvider(ScheduleDataProvider.class);
 
         if (null == wordleSkin.getNode().lookup("#scheduleNode")) {
-
             Pane scheduleNode = new Pane();
             scheduleNode.getStyleClass().add("schedule");
             scheduleNode.setId("scheduleNode");
@@ -112,14 +108,14 @@ public class Devoxx19ShowSchedule implements Step {
             Iterator<SessionData> iterator = dataProvider.getFilteredSessionData().iterator();
             while (iterator.hasNext()) {
                 Pane sessionPane = createSessionNode(context, iterator.next());
-                double sessionWidth = (config.width - config.sessionHGap) / 2.0 ;
+                double sessionWidth = (config.width - config.sessionHGap) / 2.0;
                 sessionPane.setMinWidth(sessionWidth);
                 sessionPane.setMaxWidth(sessionWidth);
                 sessionPane.setPrefWidth(sessionWidth);
                 sessionPane.setMinHeight(config.sessionHeight);
                 sessionPane.setMaxHeight(config.sessionHeight);
                 sessionPane.setPrefHeight(config.sessionHeight);
-                sessionPane.setLayoutX(col * (sessionWidth + config.sessionHGap) );
+                sessionPane.setLayoutX(col * (sessionWidth + config.sessionHGap));
                 sessionPane.setLayoutY(config.titleHeight + config.sessionVGap + (config.sessionHeight + config.sessionVGap) * row);
                 scheduleNode.getChildren().add(sessionPane);
                 col = (col == 0) ? 1 : 0;
@@ -128,11 +124,11 @@ public class Devoxx19ShowSchedule implements Step {
                 }
             }
 
-            Platform.runLater(() ->  {
+            Platform.runLater(() -> {
                 wordleSkin.getPane().getChildren().add(scheduleNode);
                 fadeIn.play();
             });
-       }
+        }
     }
 
     @Override
@@ -146,24 +142,24 @@ public class Devoxx19ShowSchedule implements Step {
     }
 
     private Pane createSessionNode(final MachineContext context, final SessionData sessionData) {
-        final GridPane gridPane = new GridPane();
-        gridPane.getStyleClass().add("scheduleSession");
-
-        var speakerNames = new Text(sessionData.speakers.stream().collect(Collectors.joining(", ")));
+        var speakerNames = new Label(sessionData.speakers.stream().collect(Collectors.joining(", ")));
+        speakerNames.setWrapText(true);
+        speakerNames.setTextAlignment(TextAlignment.RIGHT);
         speakerNames.getStyleClass().add("speakerName");
-        var speakerNamesFlow = new TextFlow(speakerNames);
-        speakerNamesFlow.getStyleClass().add("speakers");
-        speakerNamesFlow.setTextAlignment(TextAlignment.RIGHT);
-        gridPane.add(speakerNamesFlow, 2, 0, 1, 2);
-        GridPane.setHalignment(speakerNamesFlow, HPos.RIGHT);
-        GridPane.setValignment(speakerNamesFlow, VPos.TOP);
-        GridPane.setHgrow(speakerNamesFlow, Priority.ALWAYS);
-        GridPane.setVgrow(speakerNamesFlow, Priority.NEVER);
+
+        var room = new Label(sessionData.room);
+        room.getStyleClass().add("room");
+
+        var times = new Label(sessionData.beginTime + " - " + sessionData.endTime);
+        times.getStyleClass().add("times");
+
+        var topLeftVBox = new VBox(4, room, times);
+        Pane topLeft = topLeftVBox;
 
         if (config.showAvatar) {
-            var apeakerImageProvider = context.getDataProvider(SpeakerImageProvider.class);
+            var speakerImageProvider = context.getDataProvider(SpeakerImageProvider.class);
             var speakerImages = new HBox(config.avatarSpacing, sessionData.speakerObjects.stream()
-                    .map(apeakerImageProvider::getSpeakerImage)
+                    .map(speakerImageProvider::getSpeakerImage)
                     .map(ImageView::new)
                     .peek(img -> {
                         // general image sizing
@@ -180,44 +176,59 @@ public class Devoxx19ShowSchedule implements Step {
                     })
                     .toArray(Node[]::new)
             );
-            gridPane.add(speakerImages, 1, 0, 1, 2);
-            GridPane.setHgrow(speakerImages, Priority.NEVER);
+
+            topLeft = new HBox(4, topLeftVBox, speakerImages);
         }
-
-        final Text room = new Text(sessionData.room);
-        room.getStyleClass().add("room");
-        gridPane.add(room, 0, 0, 1, 1);
-
-        final Text times = new Text(sessionData.beginTime + " - " + sessionData.endTime);
-        times.getStyleClass().add("times");
-        gridPane.add(times, 0, 1, 1, 1);
-        GridPane.setValignment(times, VPos.BASELINE);
-        GridPane.setVgrow(times, Priority.ALWAYS);
-
-        FontAwesomeIconView faiFavCount = new FontAwesomeIconView();
-        faiFavCount.getStyleClass().setAll("favoriteGlyph");
 
         if (config.showFavourite) {
-            final HBox favourites = new HBox();
+            final FontAwesomeIconView faiFavCount = new FontAwesomeIconView();
+            faiFavCount.getStyleClass().setAll("favoriteGlyph");
+
             var favLabel = new Label("" + sessionData.favouritesCount);
             favLabel.getStyleClass().setAll("favoriteCount");
-            favourites.getChildren().addAll(faiFavCount , favLabel);
+
+            final HBox favourites = new HBox(5, faiFavCount, favLabel);
             favourites.setAlignment(Pos.CENTER_LEFT);
-            favourites.setSpacing(5);
-            gridPane.add(favourites, 0, 2, 3, 1);
-            GridPane.setHalignment(favourites, HPos.LEFT);
-            GridPane.setValignment(favourites, VPos.BOTTOM);
-            GridPane.setVgrow(favourites, Priority.NEVER);
+
+            topLeftVBox.getChildren().add(favourites);
         }
 
-        final Text titleText = new Text(sessionData.title);
-        final TextFlow title = new TextFlow(titleText);
+        var title = new Label(sessionData.title);
+        title.setWrapText(true);
+        title.setAlignment(Pos.BOTTOM_LEFT);
         title.getStyleClass().add("title");
-        gridPane.add(title, 0, 3, 3, 1);
-        GridPane.setHalignment(title, HPos.LEFT);
-        GridPane.setValignment(title, VPos.BOTTOM);
+        title.setMaxHeight(Double.MAX_VALUE);
 
-        return gridPane;
+        Node trackImageView;
+        if (config.showTrackAvatar && null != sessionData.trackImageUrl) {
+            var trackImage = context.getDataProvider(TrackImageDataProvider.class).getImage(sessionData.trackImageUrl);
+            trackImageView = new ImageView(trackImage);
+        } else {
+            trackImageView = null;
+        }
+
+        var bpSessionTopPane = new BorderPane();
+        bpSessionTopPane.getStyleClass().add("sessionTopPane");
+        bpSessionTopPane.setCenter(speakerNames);
+        bpSessionTopPane.setLeft(topLeft);
+        BorderPane.setAlignment(speakerNames, Pos.TOP_RIGHT);
+
+        var bpTitle = new BorderPane();
+        bpTitle.getStyleClass().add("titlePane");
+        bpTitle.setBottom(title);
+
+        var bpSessionBottomPane = new BorderPane();
+        bpSessionBottomPane.getStyleClass().add("sessionBottomPane");
+        bpSessionBottomPane.setRight(trackImageView);
+        bpSessionBottomPane.setCenter(bpTitle);
+
+        var bpSessionPane = new BorderPane();
+        bpSessionPane.getStyleClass().add("scheduleSession");
+        bpSessionPane.setTop(bpSessionTopPane);
+        bpSessionPane.setBottom(bpSessionBottomPane);
+        BorderPane.setAlignment(trackImageView, Pos.BOTTOM_RIGHT);
+
+        return bpSessionPane;
     }
 
     /**
@@ -238,7 +249,7 @@ public class Devoxx19ShowSchedule implements Step {
 
         @Override
         public Collection<Class<? extends DataProvider>> getRequiredDataProviders(final StepEngineSettings.StepDefinition stepSettings) {
-            return Arrays.asList(ScheduleDataProvider.class, SpeakerImageProvider.class);
+            return Arrays.asList(ScheduleDataProvider.class, SpeakerImageProvider.class, TrackImageDataProvider.class);
         }
     }
 
@@ -256,5 +267,6 @@ public class Devoxx19ShowSchedule implements Step {
         public double sessionVGap = 10;
         public double sessionHGap = 10;
         public double sessionHeight = 200;
+        public boolean showTrackAvatar = true;
     }
 }

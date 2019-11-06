@@ -164,22 +164,14 @@
     -fx-font-size: 14pt;
 }
 
-.scheduleSession  > .title {
-    -fx-fill: #060b33;
+.scheduleSession > .sessionBottomPane > .titlePane > .title {
+    -fx-text-fill: #060b33;
     -fx-font-size: 13pt;
 }
 
-.scheduleSession .speakerName {
-    -fx-fill: blanchedalmond;
+.scheduleSession > .sessionTopPane > .speakerName {
+    -fx-text-fill: blanchedalmond;
     /*-fx-font-size: 12pt;*/
-}
-
-.scheduleSession .speakerNames {
-    -fx-min_width: blanchedalmond;
-    /*-fx-font-size: 12pt;*/
-}
-
-.scheduleSession .speakerImage {
 }
 
 .scheduleSession .favoriteGlyph {
