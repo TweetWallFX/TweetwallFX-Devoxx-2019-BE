@@ -126,7 +126,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     }
 
     void initializePane(Pane pane) {
-        addNode(createNode(), pane, 0);
+        addNode(createNode(), pane, config.vOffset);
     }
 
     void addNode(Node node, Pane pane, double lastLayoutY) {
@@ -384,6 +384,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         public int numberOfTweets = 25;
         public String stepIdentifier = Devoxx19InfiniteScrollingTweets.class.getName();
         public boolean respectLineFeeds = true;
+        public double vOffset = 0;
 
         public NodeCacheConfig speakerNameNode = new NodeCacheConfig();
         public NodeCacheConfig speakerImageNode = new NodeCacheConfig();
