@@ -9,7 +9,7 @@
             {
                 "dataProviderClassName": "org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider",
                 "config": {
-                    "maxTweets": 25
+                    "maxTweets": 100
                 }
             }
         ],
@@ -41,7 +41,7 @@
                     "speed": 25,
                     "columns": 3,
                     "columnGap": 10,
-                    "numberOfTweets": 25,
+                    "numberOfTweets": 50,
                     "stepIdentifier": "rightHandSideInfiniteScrolling"
                 }
             },
@@ -49,7 +49,7 @@
                 "stepClassName": "org.tweetwallfx.stepengine.steps.PauseStep",
                 "config": {
                     "unit": "SECONDS",
-                    "amount": "15"
+                    "amount": "30"
                 }
             },
             {
