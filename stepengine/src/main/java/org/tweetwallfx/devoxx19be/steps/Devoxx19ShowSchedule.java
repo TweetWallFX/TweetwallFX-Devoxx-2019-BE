@@ -180,7 +180,7 @@ public class Devoxx19ShowSchedule implements Step {
             topLeft = new HBox(4, topLeftVBox, speakerImages);
         }
 
-        if (config.showFavourite) {
+        if (config.showFavourite && sessionData.favouritesCount >= 0) {
             final FontAwesomeIconView faiFavCount = new FontAwesomeIconView();
             faiFavCount.getStyleClass().setAll("favoriteGlyph");
 
@@ -226,7 +226,10 @@ public class Devoxx19ShowSchedule implements Step {
         bpSessionPane.getStyleClass().add("scheduleSession");
         bpSessionPane.setTop(bpSessionTopPane);
         bpSessionPane.setBottom(bpSessionBottomPane);
-        BorderPane.setAlignment(trackImageView, Pos.BOTTOM_RIGHT);
+
+        if (null != trackImageView) {
+            BorderPane.setAlignment(trackImageView, Pos.BOTTOM_RIGHT);
+        }
 
         return bpSessionPane;
     }
