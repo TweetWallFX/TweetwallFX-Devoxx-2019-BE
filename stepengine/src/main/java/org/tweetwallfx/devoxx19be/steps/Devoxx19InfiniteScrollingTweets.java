@@ -52,6 +52,7 @@ import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.controls.WordleSkin;
+import org.tweetwallfx.devoxx19be.provider.TweetStreamDataProvider;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.Step;
 import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
@@ -62,7 +63,6 @@ import org.tweetwallfx.transitions.LocationTransition;
 import org.tweetwallfx.tweet.api.Tweet;
 import org.tweetwallfx.tweet.api.entry.MediaTweetEntry;
 import org.tweetwallfx.tweet.api.entry.MediaTweetEntryType;
-import org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider;
 
 /**
  * Devoxx 2019 Infinite TweetStream Animation Step

@@ -7,8 +7,9 @@
     "stepEngine": {
         "dataProviderSettings": [
             {
-                "dataProviderClassName": "org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider",
+                "dataProviderClassName": "org.tweetwallfx.devoxx19be.provider.TweetStreamDataProvider",
                 "config": {
+                    "hideRetweets": true,
                     "maxTweets": 100
                 }
             }

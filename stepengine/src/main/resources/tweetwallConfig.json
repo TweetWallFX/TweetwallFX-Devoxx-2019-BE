@@ -78,11 +78,11 @@
         "initialDelay": 0,
         "scheduleDuration": 900
     },
-    "org.tweetwallfx.tweet.stepengine.dataprovider.TweetStreamDataProvider": {
+    "org.tweetwallfx.devoxx19be.provider.TweetStreamDataProvider": {
+        "hideRetweets": true,
         "historySize": 25,
         "maxTweets": 10
     },
-
     "cacheConfiguration": {
         "caches": {
             "trackImage": {
