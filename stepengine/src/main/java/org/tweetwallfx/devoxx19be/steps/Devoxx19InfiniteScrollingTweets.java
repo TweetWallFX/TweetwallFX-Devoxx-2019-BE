@@ -23,10 +23,12 @@
  */
 package org.tweetwallfx.devoxx19be.steps;
 
+import humanize.Humanize;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -40,6 +42,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -271,7 +274,9 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         TextFlow nameFlow = new TextFlow(name);
         nameFlow.setCache(config.tweetFlowNode.isCacheEnabled);
         nameFlow.setCacheHint(config.tweetFlowNode.cacheHint);
-        var vbox = new VBox(nameFlow, flow);
+        Label naturalTime = new Label(Humanize.naturalTime(displayTweet.getCreatedAt(), Locale.ENGLISH));
+        naturalTime.getStyleClass().add("tweetTime");
+        var vbox = new VBox(nameFlow, naturalTime, flow);
         vbox.applyCss();
         vbox.layout();
         HBox tweet = new HBox(profileImageView, vbox);
