@@ -24,8 +24,6 @@
 package org.tweetwallfx.devoxx19be.provider;
 
 import javafx.scene.image.Image;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.tweetwallfx.stepengine.api.DataProvider;
 import org.tweetwallfx.stepengine.api.config.StepEngineSettings;
 import static org.tweetwallfx.util.ToString.createToString;
@@ -33,7 +31,6 @@ import static org.tweetwallfx.util.ToString.map;
 
 public class TrackImageDataProvider implements DataProvider {
 
-    private static final Logger LOG = LogManager.getLogger(TrackImageDataProvider.class);
     private final Config config;
 
     private TrackImageDataProvider(final Config config) {
