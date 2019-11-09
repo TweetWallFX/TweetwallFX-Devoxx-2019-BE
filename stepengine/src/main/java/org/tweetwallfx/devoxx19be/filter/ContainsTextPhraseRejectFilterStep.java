@@ -50,7 +50,7 @@ public class ContainsTextPhraseRejectFilterStep implements FilterStep<Tweet> {
     private static final Logger LOG = LogManager.getLogger(ContainsTextPhraseRejectFilterStep.class);
     private final Config config;
 
-    private ContainsTextPhraseRejectFilterStep(Config config) {
+    private ContainsTextPhraseRejectFilterStep(final Config config) {
         this.config = config;
     }
 
@@ -59,7 +59,9 @@ public class ContainsTextPhraseRejectFilterStep implements FilterStep<Tweet> {
         Tweet t = tweet;
 
         do {
-            LOG.info("Tweet(id:{}): Checking Tweet(id:{}) ...", t.getId(), tweet.getId());
+            LOG.debug("Tweet(id:{}): Checking Tweet(id:{}) ...",
+                    tweet.getId(),
+                    t.getId());
 
             final String text = t.getText().toLowerCase(Locale.ENGLISH);
             final Optional<String> containedPhrase = config.getTextPhrases().stream()
@@ -68,15 +70,21 @@ public class ContainsTextPhraseRejectFilterStep implements FilterStep<Tweet> {
                     .findAny();
 
             if (containedPhrase.isPresent()) {
-                LOG.info("Tweet(id:{}): Rejected Tweet(id:{}) because it contains the phrase {}", t.getId(), tweet.getId(), containedPhrase.get());
+                LOG.warn("Tweet(id:{}): The text phrase \"{}\" is contained in Tweet(id:{}) because it contains the phrase {}",
+                        tweet.getId(),
+                        containedPhrase.get(),
+                        t.getId());
                 return FilterStep.Result.REJECTED;
             }
 
-            LOG.debug("Tweet(id:{}): None of the rejected text phrases are contained in in Tweet(id:{})", t.getId(), tweet.getId());
+            LOG.debug("Tweet(id:{}): None of the rejected text phrases are contained in Tweet(id:{})",
+                    tweet.getId(),
+                    t.getId());
             t = t.getRetweetedTweet();
         } while (config.isCheckRetweeted() && null != t);
 
-        LOG.info("Tweet(id:{}): No terminal decision found -> NOTHING_DEFINITE", tweet.getId());
+        LOG.debug("Tweet(id:{}): No terminal decision found -> NOTHING_DEFINITE",
+                tweet.getId());
         return FilterStep.Result.NOTHING_DEFINITE;
     }
 
