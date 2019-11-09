@@ -2,6 +2,10 @@
     "tweetwall": {
         "query": "#devoxx",
         "title": "The JavaFX Exhibition Tweetwall for Devoxx BE 2019!",
+        "additionalStopWords": [
+            "#devoxxbe",
+            "#devoxx2019"
+        ],
         "stylesheetResource": "tweetwall.css"
     },
     "stepEngine": {
