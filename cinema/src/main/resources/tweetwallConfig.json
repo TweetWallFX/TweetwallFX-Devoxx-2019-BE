@@ -14,6 +14,24 @@
                 }
             }
         ],
+        "visualizationSettings": {
+            "infiniteTweets" : {
+                "visualizationClassName": "org.tweetwallfx.devoxx19be.visualization.Devoxx19InfiniteScrollingTweets",
+                "config": {
+                    "layoutX": 1050,
+                    "layoutY": 215,
+                    "height": 630,
+                    "tweetGap": 10,
+                    "tweetWidth": 200,
+                    "stepDuration": 5000,
+                    "speed": 25,
+                    "columns": 3,
+                    "columnGap": 10,
+                    "numberOfTweets": 50,
+                    "stepIdentifier": "rightHandSideInfiniteScrolling",
+                    "vOffset": 400                }
+            }
+        },
         "steps": [
             {
                 "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19ShowSchedule",
@@ -31,20 +49,9 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.devoxx19be.steps.Devoxx19InfiniteScrollingTweets",
+                "stepClassName": "org.tweetwallfx.stepengine.steps.visual.ShowAction",
                 "config": {
-                    "layoutX": 1050,
-                    "layoutY": 215,
-                    "height": 630,
-                    "tweetGap": 10,
-                    "tweetWidth": 200,
-                    "stepDuration": 5000,
-                    "speed": 25,
-                    "columns": 3,
-                    "columnGap": 10,
-                    "numberOfTweets": 50,
-                    "stepIdentifier": "rightHandSideInfiniteScrolling",
-                    "vOffset": 400
+                    "visualizationIdentifier": "infiniteTweets"
                 }
             },
             {
@@ -83,9 +90,9 @@
                 }
             },
             {
-                "stepClassName": "org.tweetwallfx.devoxx19be.steps.GenericShutdownStep",
+                "stepClassName": "org.tweetwallfx.stepengine.steps.visual.HideAction",
                 "config": {
-                    "stepToTerminate": "rightHandSideInfiniteScrolling"
+                    "visualizationIdentifier": "infiniteTweets"
                 }
             },
             {
