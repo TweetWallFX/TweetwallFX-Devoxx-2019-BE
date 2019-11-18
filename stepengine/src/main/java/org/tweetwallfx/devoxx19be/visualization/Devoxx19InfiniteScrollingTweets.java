@@ -54,11 +54,9 @@ import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tweetwallfx.controls.WordleSkin;
 import org.tweetwallfx.devoxx19be.provider.TweetStreamDataProvider;
 import org.tweetwallfx.devoxx19be.steps.AbstractConfig;
 import org.tweetwallfx.stepengine.api.DataProvider;
-import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
 import org.tweetwallfx.stepengine.api.Visualization;
 import org.tweetwallfx.stepengine.api.config.StepEngineSettings.VisualizationSetting;
 import org.tweetwallfx.stepengine.dataproviders.PhotoImageMediaEntryDataProvider;
@@ -84,7 +82,7 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
     private TweetUserProfileImageDataProvider tweetUserProfileImageDataProvider;
     private PhotoImageMediaEntryDataProvider photoImageMediaEntryDataProvider;
     private TweetStreamDataProvider tweetStreamDataProvider;
-    private WordleSkin wordleSkin;
+    private Pane wallPane;
     private CountDownLatch shutdownCountdown;
     private final AtomicInteger next = new AtomicInteger(0);
 
@@ -95,10 +93,9 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
     }
 
     @Override
-    public void doShow(final MachineContext context) {
+    public void doShow(final Visualization.Context context) {
         isTerminated = false;
-        wordleSkin = (WordleSkin) context.get("WordleSkin");
-        context.put(config.stepIdentifier, this);
+        wallPane = context.getWallPane();
         tweetUserProfileImageDataProvider = context.getDataProvider(TweetUserProfileImageDataProvider.class);
         photoImageMediaEntryDataProvider = context.getDataProvider(PhotoImageMediaEntryDataProvider.class);
 
@@ -108,7 +105,7 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
         for (int i = 0; i< config.columns; i++) {
             final int column = i;
             Platform.runLater(() -> {
-                var pane = createInfinitePane(wordleSkin, "infiniteStream." + column);
+                var pane = createInfinitePane(wallPane, "infiniteStream." + column);
 
                 pane.setLayoutX(config.layoutX + column * (config.tweetWidth + 64 + 10 +5 + config.columnGap));
                 pane.setLayoutY(config.layoutY);
@@ -241,12 +238,12 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
         return locationTransition;
     }
 
-    private Pane createInfinitePane(final WordleSkin wordleSkin, String paneId) {
+    private Pane createInfinitePane(final Pane wallPane, String paneId) {
         var pane = new Pane();
         pane.setId(paneId);
-        wordleSkin.getPane().getChildren().add(pane);
-        wordleSkin.getPane().applyCss();
-        wordleSkin.getPane().layout();
+        wallPane.getChildren().add(pane);
+        wallPane.applyCss();
+        wallPane.layout();
         return pane;
     }
 
@@ -319,11 +316,11 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
     }
 
     @Override
-    public void doHide(MachineContext machineContext) {
+    public void doHide(Visualization.Context context) {
         shutdownCountdown = new CountDownLatch(2);
         this.isTerminated = true;
         Platform.runLater(() -> {
-            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId() != null && p.getId().startsWith("infiniteStream")).forEach(pane -> {
+            wallPane.getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId() != null && p.getId().startsWith("infiniteStream")).forEach(pane -> {
                 LOG.info("Shutting down " + pane.getId());
                 for (Node nodeToFadeOut : pane.getChildren()) {
                     var fadeOut = new FadeTransition(Duration.millis(1500), nodeToFadeOut);
@@ -332,7 +329,7 @@ public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, 
                     fadeOut.setOnFinished(e -> {
                         pane.getChildren().remove(nodeToFadeOut);
                         if (pane.getChildren().isEmpty()) {
-                            wordleSkin.getPane().getChildren().remove(pane);
+                            wallPane.getChildren().remove(pane);
                             LOG.info("Shutting down - removed " + pane.getId() + " from wordle");
                             shutdownCountdown.countDown();
                         }
