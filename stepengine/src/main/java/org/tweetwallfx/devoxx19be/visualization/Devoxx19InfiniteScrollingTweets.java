@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.tweetwallfx.devoxx19be.steps;
+package org.tweetwallfx.devoxx19be.visualization;
 
 import humanize.Humanize;
 import java.util.Arrays;
@@ -54,12 +54,11 @@ import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tweetwallfx.controls.WordleSkin;
 import org.tweetwallfx.devoxx19be.provider.TweetStreamDataProvider;
+import org.tweetwallfx.devoxx19be.steps.AbstractConfig;
 import org.tweetwallfx.stepengine.api.DataProvider;
-import org.tweetwallfx.stepengine.api.Step;
-import org.tweetwallfx.stepengine.api.StepEngine.MachineContext;
-import org.tweetwallfx.stepengine.api.config.StepEngineSettings;
+import org.tweetwallfx.stepengine.api.Visualization;
+import org.tweetwallfx.stepengine.api.config.StepEngineSettings.VisualizationSetting;
 import org.tweetwallfx.stepengine.dataproviders.PhotoImageMediaEntryDataProvider;
 import org.tweetwallfx.stepengine.dataproviders.TweetUserProfileImageDataProvider;
 import org.tweetwallfx.transitions.LocationTransition;
@@ -72,7 +71,7 @@ import org.tweetwallfx.tweet.api.entry.MediaTweetEntryType;
  *
  * @author Sven Reimers
  */
-public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
+public class Devoxx19InfiniteScrollingTweets implements Visualization.Showable, Visualization.Hideable {
 
     private static final Logger LOG = LogManager.getLogger(Devoxx19InfiniteScrollingTweets.class);
 
@@ -83,7 +82,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     private TweetUserProfileImageDataProvider tweetUserProfileImageDataProvider;
     private PhotoImageMediaEntryDataProvider photoImageMediaEntryDataProvider;
     private TweetStreamDataProvider tweetStreamDataProvider;
-    private WordleSkin wordleSkin;
+    private Pane wallPane;
     private CountDownLatch shutdownCountdown;
     private final AtomicInteger next = new AtomicInteger(0);
 
@@ -94,10 +93,9 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     }
 
     @Override
-    public void doStep(final MachineContext context) {
+    public void doShow(final Visualization.Context context) {
         isTerminated = false;
-        wordleSkin = (WordleSkin) context.get("WordleSkin");
-        context.put(config.stepIdentifier, this);
+        wallPane = context.getWallPane();
         tweetUserProfileImageDataProvider = context.getDataProvider(TweetUserProfileImageDataProvider.class);
         photoImageMediaEntryDataProvider = context.getDataProvider(PhotoImageMediaEntryDataProvider.class);
 
@@ -105,21 +103,23 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
 
         updateTweetList();
         for (int i = 0; i< config.columns; i++) {
-            var pane = createInfinitePane(wordleSkin, "infiniteStream." + i);
+            final int column = i;
+            Platform.runLater(() -> {
+                var pane = createInfinitePane(wallPane, "infiniteStream." + column);
 
-            pane.setLayoutX(config.layoutX + i * (config.tweetWidth + 64 + 10 +5 + config.columnGap));
-            pane.setLayoutY(config.layoutY);
-            pane.setMinWidth(config.tweetWidth + 64 + 10 +5);
-            pane.setMinHeight(config.height);
-            pane.setMaxWidth(config.tweetWidth + 64 + 10 + 5);
-            pane.setMaxHeight(config.height);
-            pane.setPrefWidth(config.tweetWidth + 64 + 10 + 5);
-            pane.setPrefHeight(config.height);
-            pane.setClip(new Rectangle(config.tweetWidth + 64 + 10 + 10, config.height));
+                pane.setLayoutX(config.layoutX + column * (config.tweetWidth + 64 + 10 +5 + config.columnGap));
+                pane.setLayoutY(config.layoutY);
+                pane.setMinWidth(config.tweetWidth + 64 + 10 +5);
+                pane.setMinHeight(config.height);
+                pane.setMaxWidth(config.tweetWidth + 64 + 10 + 5);
+                pane.setMaxHeight(config.height);
+                pane.setPrefWidth(config.tweetWidth + 64 + 10 + 5);
+                pane.setPrefHeight(config.height);
+                pane.setClip(new Rectangle(config.tweetWidth + 64 + 10 + 10, config.height));
 
-            initializePane(pane);
+                initializePane(pane);
+            });
         }
-        context.proceed();
     }
 
     private void updateTweetList() {
@@ -238,12 +238,12 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
         return locationTransition;
     }
 
-    private Pane createInfinitePane(final WordleSkin wordleSkin, String paneId) {
+    private Pane createInfinitePane(final Pane wallPane, String paneId) {
         var pane = new Pane();
         pane.setId(paneId);
-        wordleSkin.getPane().getChildren().add(pane);
-        wordleSkin.getPane().applyCss();
-        wordleSkin.getPane().layout();
+        wallPane.getChildren().add(pane);
+        wallPane.applyCss();
+        wallPane.layout();
         return pane;
     }
 
@@ -316,16 +316,11 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     }
 
     @Override
-    public java.time.Duration preferredStepDuration(final MachineContext context) {
-        return java.time.Duration.ofMillis(config.stepDuration);
-    }
-
-    @Override
-    public void shutdown() {
+    public void doHide(Visualization.Context context) {
         shutdownCountdown = new CountDownLatch(2);
         this.isTerminated = true;
         Platform.runLater(() -> {
-            wordleSkin.getPane().getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId() != null && p.getId().startsWith("infiniteStream")).forEach(pane -> {
+            wallPane.getChildren().stream().map(p -> (Pane) p).filter(p -> p.getId() != null && p.getId().startsWith("infiniteStream")).forEach(pane -> {
                 LOG.info("Shutting down " + pane.getId());
                 for (Node nodeToFadeOut : pane.getChildren()) {
                     var fadeOut = new FadeTransition(Duration.millis(1500), nodeToFadeOut);
@@ -334,7 +329,7 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
                     fadeOut.setOnFinished(e -> {
                         pane.getChildren().remove(nodeToFadeOut);
                         if (pane.getChildren().isEmpty()) {
-                            wordleSkin.getPane().getChildren().remove(pane);
+                            wallPane.getChildren().remove(pane);
                             LOG.info("Shutting down - removed " + pane.getId() + " from wordle");
                             shutdownCountdown.countDown();
                         }
@@ -351,23 +346,23 @@ public class Devoxx19InfiniteScrollingTweets implements Step, Controllable {
     }
 
     /**
-     * Implementation of {@link Step.Factory} as Service implementation creating
+     * Implementation of {@link Visualization.Factory} as Service implementation creating
      * {@link Devoxx19InfiniteScrollingTweets}.
      */
-    public static final class FactoryImpl implements Step.Factory {
+    public static final class FactoryImpl implements Visualization.Factory {
 
         @Override
-        public Devoxx19InfiniteScrollingTweets create(final StepEngineSettings.StepDefinition stepDefinition) {
-            return new Devoxx19InfiniteScrollingTweets(stepDefinition.getConfig(Config.class));
+        public Devoxx19InfiniteScrollingTweets create(final VisualizationSetting visualizazionSetting) {
+            return new Devoxx19InfiniteScrollingTweets(visualizazionSetting.getConfig(Config.class));
         }
 
         @Override
-        public Class<Devoxx19InfiniteScrollingTweets> getStepClass() {
+        public Class<Devoxx19InfiniteScrollingTweets> getVisualizationClass() {
             return Devoxx19InfiniteScrollingTweets.class;
         }
 
         @Override
-        public Collection<Class<? extends DataProvider>> getRequiredDataProviders(final StepEngineSettings.StepDefinition stepSettings) {
+        public Collection<Class<? extends DataProvider>> getRequiredDataProviders(VisualizationSetting visualizationSetting) {
             return Arrays.asList(
                     TweetStreamDataProvider.class,
                     TweetUserProfileImageDataProvider.class,
